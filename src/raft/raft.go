@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"6.824/labgob"
-	"6.824/labrpc"
+	"labgob"
+	"labrpc"
 )
 
 //
@@ -90,7 +90,6 @@ type Raft struct {
 
 	nextIndex  []int // for each server, index of the next log entry to send to that server (initialized to leader last log index + 1)
 	matchIndex []int // for each server, index of highest log entry known to be replicated on server (initialized to 0, increases monotonically)
-	commited   []int // cnt for each entry's commited situation
 
 	applyChannel chan ApplyMsg
 
@@ -154,7 +153,7 @@ func (rf *Raft) readPersist(data []byte) {
 func (rf *Raft) resetTimer() {
 	rf.timer = 0
 	rand.Seed(time.Now().Unix() + int64(rf.me))
-	rf.timeout = rand.Intn(150) + 350
+	rf.timeout = rand.Intn(500) + 500
 }
 
 // Upon receiving a conflict response, the leader should first search its log for conflictTerm.
@@ -317,7 +316,7 @@ func (rf *Raft) BecomeFollwer(term int) {
 func (rf *Raft) sendRequestVote() {
 	voteCnt := 1
 	totalCnt := 1
-
+	currentTime := time.Now()
 	var mu sync.Mutex
 	cond := sync.NewCond(&mu)
 
@@ -335,8 +334,10 @@ func (rf *Raft) sendRequestVote() {
 		go func(server int) {
 			reply := &RequestVoteReply{}
 			for {
-				if rf.raftState != Candidate {
-					return
+				if rf.raftState != Candidate || time.Since(currentTime) >= 500*time.Millisecond {
+					// fmt.Printf("[%d] Time limit exceeded\n", rf.me)
+					totalCnt++
+					break
 				}
 
 				ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
@@ -410,26 +411,6 @@ func (rf *Raft) sendHeartBeat() {
 				rf.mu.Lock()
 				defer rf.mu.Unlock()
 				if reply.Success {
-					if len(args.Entry) > 0 {
-						for len(rf.commited) <= len(rf.Entry)-1 {
-							rf.commited = append(rf.commited, 0)
-						}
-						for idx := args.PrevLogIndex + 1; idx <= len(rf.Entry)-1; idx++ {
-							if rf.Entry[idx].Term != rf.CurrentTerm {
-								// Raft never commits log entries from previous terms by count- ing replicas
-								continue
-							}
-							rf.commited[idx]++
-							if rf.commited[idx] == len(rf.peers)/2 { // majority
-								rf.UpdateCommitAndApply(idx)
-								// fmt.Println(rf.me, "commit index:", rf.commitIndex, "commited command:")
-								// for j := 1; j <= rf.commitIndex; j++ {
-								// 	fmt.Printf("%v ", rf.Entry[j-1].Command)
-								// }
-								// fmt.Printf("\n")
-							}
-						}
-					}
 					rf.matchIndex[server] = reply.ConflictIndex
 					rf.nextIndex[server] = reply.ConflictIndex + 1
 					rf.findN()
