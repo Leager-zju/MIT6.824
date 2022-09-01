@@ -1,10 +1,16 @@
 package mr
 
-import "fmt"
-import "log"
-import "net/rpc"
-import "hash/fnv"
-
+import (
+	"encoding/json"
+	"fmt"
+	"hash/fnv"
+	"io/ioutil"
+	"log"
+	"net/rpc"
+	"os"
+	"sort"
+	"time"
+)
 
 //
 // Map functions return a slice of KeyValue.
@@ -13,6 +19,22 @@ type KeyValue struct {
 	Key   string
 	Value string
 }
+
+type TaskType int
+
+const (
+	NONE TaskType = iota
+	MAP
+	REDUCE
+)
+
+// for sorting by key.
+type ByKey []KeyValue
+
+// for sorting by key.
+func (a ByKey) Len() int           { return len(a) }
+func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
 //
 // use ihash(key) % NReduce to choose the reduce
@@ -24,64 +46,166 @@ func ihash(key string) int {
 	return int(h.Sum32() & 0x7fffffff)
 }
 
-
-//
-// main/mrworker.go calls this function.
-//
 func Worker(mapf func(string, string) []KeyValue,
 	reducef func(string, []string) string) {
 
-	// Your worker implementation here.
+	// One way to get started is to modify mr/worker.go's Worker()
+	// to send an RPC to the coordinator asking for a task.
+	reply := AskForTask()
+	for {
+		if reply.Wait {
+			time.Sleep(time.Second * 5)
+		} else if reply.Task == MAP {
+			// map phase
+			mapTaskNumber := reply.MapTaskNumber
+			// fmt.Println(mapTaskNumber, ": map begin")
+			file, err := os.Open(reply.Filename)
+			if err != nil {
+				log.Fatalf("cannot open %v", reply.Filename)
+			}
+			content, err := ioutil.ReadAll(file)
+			if err != nil {
+				log.Fatalf("cannot read %v", reply.Filename)
+			}
+			file.Close()
+			kvs := mapf(reply.Filename, string(content))
 
-	// uncomment to send the Example RPC to the coordinator.
-	// CallExample()
+			// write kv into file buckets
+			// key -> filename: "ihash(key)"
 
-}
+			temp := make([][]KeyValue, reply.R)
 
-//
-// example function to show how to make an RPC call to the coordinator.
-//
-// the RPC argument and reply types are defined in rpc.go.
-//
-func CallExample() {
+			for i := range temp {
+				temp[i] = make([]KeyValue, 0)
+			}
 
-	// declare an argument structure.
-	args := ExampleArgs{}
+			for _, kv := range kvs {
+				hash := ihash(kv.Key) % reply.R
+				temp[hash] = append(temp[hash], kv)
+			}
+			for i := 0; i < len(temp); i++ {
+				ofile, _ := ioutil.TempFile("/home/leager/go/src/6.824/src/mr/mapfile", fmt.Sprintf("%d", i))
+				enc := json.NewEncoder(ofile)
+				for _, kv := range temp[i] {
+					enc.Encode(&kv)
+				}
 
-	// fill in the argument(s).
-	args.X = 99
+				old_path := ofile.Name()
+				new_path := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-%d-%d", mapTaskNumber, i)
 
-	// declare a reply structure.
-	reply := ExampleReply{}
+				os.Rename(old_path, new_path)
+				ofile.Close()
+			}
+			// tell the master that the map job is done
 
-	// send the RPC request, wait for the reply.
-	// the "Coordinator.Example" tells the
-	// receiving server that we'd like to call
-	// the Example() method of struct Coordinator.
-	ok := call("Coordinator.Example", &args, &reply)
-	if ok {
-		// reply.Y should be 100.
-		fmt.Printf("reply.Y %v\n", reply.Y)
-	} else {
-		fmt.Printf("call failed!\n")
+			CallFinish(MAP, reply.TimeStamp, mapTaskNumber, 0)
+			// fmt.Println(mapTaskNumber, ": map finish")
+		} else {
+			// reduce phase
+			reduceTaskNumber := reply.ReduceTaskNumber
+			// fmt.Println(reduceTaskNumber, ": reduce begin")
+
+			// ofilename := fmt.Sprintf("mr-out-%d", reduceTaskNumber)
+			// ofile, _ := os.Create(ofilename)
+			ofile, _ := ioutil.TempFile("/home/leager/go/src/6.824/src/mr/reducefile", fmt.Sprintf("%d", reduceTaskNumber))
+
+			var kva []KeyValue
+
+			for i := 0; i < reply.M; i++ {
+				iFilename := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-%d-%d", i, reduceTaskNumber)
+				iFile, err := os.Open(iFilename)
+				if err == nil {
+					// fmt.Printf("mr-%d-%d: read success\n", i, reduceTaskNumber)
+					dec := json.NewDecoder(iFile)
+					for {
+						var kv KeyValue
+						if err := dec.Decode(&kv); err != nil {
+							break
+						}
+						kva = append(kva, kv)
+					}
+				} else {
+					log.Fatal(err)
+				}
+			}
+			sort.Sort(ByKey(kva))
+			i := 0
+			for i < len(kva) {
+				j := i + 1
+				for j < len(kva) && kva[j].Key == kva[i].Key {
+					j++
+				}
+				values := []string{}
+				for k := i; k < j; k++ {
+					values = append(values, kva[k].Value)
+				}
+				output := reducef(kva[i].Key, values)
+
+				// this is the correct format for each line of Reduce output.
+				fmt.Fprintf(ofile, "%v %v\n", kva[i].Key, output)
+
+				i = j
+			}
+
+			old_path := ofile.Name()
+			new_path := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-out-%d", reduceTaskNumber)
+
+			// no reduce task finished yet before
+			if _, err := os.Open(new_path); err != nil {
+				os.Rename(old_path, new_path)
+			}
+
+			ofile.Close()
+			// tell the master that the reduce job is done
+			CallFinish(REDUCE, reply.TimeStamp, 0, reduceTaskNumber)
+			// fmt.Println(reduceTaskNumber, ": reduce finish")
+		}
+		reply = AskForTask()
+		if reply.Over {
+			// fmt.Println("over")
+			return
+		}
 	}
 }
 
+// RPC call to the master.
+
+func AskForTask() Reply {
+	// fmt.Println("ask for task")
+	message := Args{}
+	reply := Reply{}
+	call("Master.Arrange", &message, &reply)
+
+	return reply
+}
+
+func CallFinish(finish TaskType, timestamp time.Time, m int, r int) {
+	message := Args{
+		Finished:         finish,
+		TimeStamp:        timestamp,
+		MapTaskNumber:    m,
+		ReduceTaskNumber: r,
+	}
+	reply := Reply{}
+
+	// send the RPC request, wait for the reply.
+	call("Master.Finished", &message, &reply)
+}
+
 //
-// send an RPC request to the coordinator, wait for the response.
+// send an RPC request to the master, wait for the response.
 // usually returns true.
 // returns false if something goes wrong.
 //
-func call(rpcname string, args interface{}, reply interface{}) bool {
+func call(rpcname string, message interface{}, reply interface{}) bool {
 	// c, err := rpc.DialHTTP("tcp", "127.0.0.1"+":1234")
-	sockname := coordinatorSock()
-	c, err := rpc.DialHTTP("unix", sockname)
+	c, err := rpc.DialHTTP("unix", "mr-socket")
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
 	defer c.Close()
 
-	err = c.Call(rpcname, args, reply)
+	err = c.Call(rpcname, message, reply)
 	if err == nil {
 		return true
 	}
