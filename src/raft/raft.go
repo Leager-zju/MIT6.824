@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"labgob"
-	"labrpc"
+	"6.824/labgob"
+	"6.824/labrpc"
 )
 
 //
