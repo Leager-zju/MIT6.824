@@ -17,8 +17,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"6.824/labgob"
-	"6.824/labrpc"
+	"6.824/src/labgob"
+	"6.824/src/labrpc"
 
 	crand "crypto/rand"
 	"encoding/base64"
@@ -185,6 +185,7 @@ func (cfg *config) applier(i int, applyCh chan ApplyMsg) {
 
 // returns "" or error string
 func (cfg *config) ingestSnap(i int, snapshot []byte, index int) string {
+	fmt.Println("		??????		")
 	if snapshot == nil {
 		log.Fatalf("nil snapshot")
 		return "nil snapshot"

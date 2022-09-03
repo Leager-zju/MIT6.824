@@ -3,9 +3,9 @@ package shardctrler
 import (
 	"sync"
 
-	"6.824/labgob"
-	"6.824/labrpc"
-	"6.824/raft"
+	"6.824/src/labgob"
+	"6.824/src/labrpc"
+	"6.824/src/raft"
 )
 
 type ShardCtrler struct {

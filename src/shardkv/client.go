@@ -13,8 +13,8 @@ import (
 	"math/big"
 	"time"
 
-	"6.824/labrpc"
-	"6.824/shardctrler"
+	"6.824/src/labrpc"
+	"6.824/src/shardctrler"
 )
 
 //

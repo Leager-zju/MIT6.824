@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"6.824/lockservice"
+	"6.824/src/lockservice"
 )
 
 func usage() {

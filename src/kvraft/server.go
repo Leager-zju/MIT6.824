@@ -5,10 +5,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"6.824/labrpc"
-	"6.824/raft"
+	"6.824/src/labrpc"
+	"6.824/src/raft"
 
-	"6.824/labgob"
+	"6.824/src/labgob"
 )
 
 const Debug = false
@@ -21,9 +21,11 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 }
 
 type Op struct {
-	// Your definitions here.
 	// Field names must start with capital letters,
 	// otherwise RPC will break.
+	Operation string
+	Key       string
+	Value     string
 }
 
 type KVServer struct {
@@ -39,11 +41,20 @@ type KVServer struct {
 }
 
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
-	// Your code here.
+	_, _, isleader := kv.rf.Start(Op{Operation: "Get", Key: args.Key})
+	if !isleader {
+		reply.Err = ErrWrongLeader
+		return
+	}
 }
 
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	// Your code here.
+	Operation := args.Op
+	_, _, isleader := kv.rf.Start(Op{Operation: Operation, Key: args.Key})
+	if !isleader {
+		reply.Err = ErrWrongLeader
+		return
+	}
 }
 
 //

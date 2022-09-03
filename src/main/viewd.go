@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"6.824/viewservice"
+	"6.824/src/viewservice"
 )
 
 func main() {

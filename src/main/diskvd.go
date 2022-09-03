@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"time"
 
-	"6.824/diskv"
+	"6.824/src/src/diskv"
 )
 
 func usage() {

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode"
 
-	"6.824/mr"
+	"6.824/src/mr"
 )
 
 //

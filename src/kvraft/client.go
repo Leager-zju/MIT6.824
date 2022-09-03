@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"math/big"
 
-	"6.824/labrpc"
+	"6.824/src/labrpc"
 )
 
 type Clerk struct {
@@ -31,15 +31,18 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 // returns "" if the key does not exist.
 // keeps trying forever in the face of all other errors.
 //
-// you can send an RPC with code like this:
-// ok := ck.servers[i].Call("KVServer.Get", &args, &reply)
-//
-// the types of args and reply (including whether they are pointers)
-// must match the declared types of the RPC handler function's
-// arguments. and reply must be passed as a pointer.
-//
 func (ck *Clerk) Get(key string) string {
+	args := &GetArgs{
+		Key: key,
+	}
+	reply := &GetReply{}
 
+	for i := range ck.servers {
+		ok := ck.servers[i].Call("KVServer.Get", &args, &reply)
+		if ok && reply.Err == "OK" {
+			return reply.Value
+		}
+	}
 	// You will have to modify this function.
 	return ""
 }
@@ -47,14 +50,19 @@ func (ck *Clerk) Get(key string) string {
 //
 // shared by Put and Append.
 //
-// you can send an RPC with code like this:
-// ok := ck.servers[i].Call("KVServer.PutAppend", &args, &reply)
-//
-// the types of args and reply (including whether they are pointers)
-// must match the declared types of the RPC handler function's
-// arguments. and reply must be passed as a pointer.
-//
 func (ck *Clerk) PutAppend(key string, value string, op string) {
+	args := &PutAppendArgs{
+		Key:   key,
+		Value: value,
+		Op:    op,
+	}
+	reply := &PutAppendReply{}
+	for i := range ck.servers {
+		ok := ck.servers[i].Call("KVServer.PutAppend", &args, &reply)
+		if ok && reply.Err == "OK" {
+			return
+		}
+	}
 	// You will have to modify this function.
 }
 

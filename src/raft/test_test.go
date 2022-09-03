@@ -9,6 +9,7 @@ package raft
 //
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"sync/atomic"
@@ -171,7 +172,7 @@ func TestRPCBytes2B(t *testing.T) {
 	iters := 10
 	var sent int64 = 0
 	for index := 2; index < iters+2; index++ {
-		cmd := randstring(5000)
+		cmd := randstring(5)
 		xindex := cfg.one(cmd, servers, false)
 		if xindex != index {
 			t.Fatalf("got index %v but expected %v", xindex, index)
@@ -1142,7 +1143,7 @@ func snapcommon(t *testing.T, name string, disconnect bool, reliable bool, crash
 			cfg.crash1(victim)
 			cfg.one(rand.Int(), servers-1, true)
 		}
-		// fmt.Printf("------iter %d------\n", i)
+		fmt.Printf("------iter %d------\n", i)
 		// perhaps send enough to get a snapshot
 		nn := (SnapShotInterval / 2) + (rand.Int() % SnapShotInterval)
 		for i := 0; i < nn; i++ {
