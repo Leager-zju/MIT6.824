@@ -9,7 +9,6 @@ package raft
 //
 
 import (
-	"fmt"
 	"math/rand"
 	"sync"
 	"sync/atomic"
@@ -886,7 +885,7 @@ func TestUnreliableAgree2C(t *testing.T) {
 
 	var wg sync.WaitGroup
 
-	for iters := 1; iters < 50; iters++ {
+	for iters := 1; iters < 20; iters++ {
 		for j := 0; j < 4; j++ {
 			wg.Add(1)
 			go func(iters, j int) {
@@ -916,7 +915,7 @@ func TestFigure8Unreliable2C(t *testing.T) {
 	cfg.one(rand.Int()%10000, 1, true)
 
 	nup := servers
-	for iters := 0; iters < 1000; iters++ {
+	for iters := 0; iters < 500; iters++ {
 		if iters == 200 {
 			cfg.setlongreordering(true)
 		}
@@ -1143,7 +1142,7 @@ func snapcommon(t *testing.T, name string, disconnect bool, reliable bool, crash
 			cfg.crash1(victim)
 			cfg.one(rand.Int(), servers-1, true)
 		}
-		fmt.Printf("------iter %d------\n", i)
+		// fmt.Printf("------iter %d------\n", i)
 		// perhaps send enough to get a snapshot
 		nn := (SnapShotInterval / 2) + (rand.Int() % SnapShotInterval)
 		for i := 0; i < nn; i++ {

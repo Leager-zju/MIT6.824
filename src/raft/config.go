@@ -185,7 +185,6 @@ func (cfg *config) applier(i int, applyCh chan ApplyMsg) {
 
 // returns "" or error string
 func (cfg *config) ingestSnap(i int, snapshot []byte, index int) string {
-	fmt.Println("		??????		")
 	if snapshot == nil {
 		log.Fatalf("nil snapshot")
 		return "nil snapshot"
