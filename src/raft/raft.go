@@ -128,13 +128,6 @@ func (rf *Raft) currentTerm() int {
 	return ct
 }
 
-func (rf *Raft) Timeout() int {
-	rf.mu.RLock()
-	defer rf.mu.RUnlock()
-	to := rf.electionTimeout
-	return to
-}
-
 func (rf *Raft) LogEntry() (Entry []LogEntry, length int) {
 	rf.mu.RLock()
 	defer rf.mu.RUnlock()
@@ -142,27 +135,6 @@ func (rf *Raft) LogEntry() (Entry []LogEntry, length int) {
 	Entry = make([]LogEntry, length)
 	copy(Entry, rf.Entry)
 	return
-}
-
-func (rf *Raft) CommitIndex() int {
-	rf.mu.RLock()
-	defer rf.mu.RUnlock()
-	ci := rf.commitIndex
-	return ci
-}
-
-func (rf *Raft) LastApplied() int {
-	rf.updateApplyMu.RLock()
-	defer rf.updateApplyMu.RUnlock()
-	la := rf.lastApplied
-	return la
-}
-
-func (rf *Raft) baseIndex() int {
-	rf.mu.RLock()
-	defer rf.mu.RUnlock()
-	bi := rf.BaseIndex
-	return bi
 }
 
 func (rf *Raft) MatchNextIndex(server int) (matchindex int, nextindex int) {
@@ -475,7 +447,7 @@ func (rf *Raft) sendRequestVote() {
 						defer mu.Unlock()
 						voteCnt++
 						// fmt.Printf("[%d] get grant from %d\n", rf.me, server)
-					} else if reply.Term > rf.currentTerm() {
+					} else if reply.Term > term {
 						rf.mu.Lock()
 						defer rf.mu.Unlock()
 						rf.BecomeFollwer(reply.Term)
@@ -511,13 +483,11 @@ func (rf *Raft) sendRequestVote() {
 
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	rf.mu.Lock()
-	// fmt.Printf("[%d] requestvote lock\n", rf.me)
 	defer rf.mu.Unlock()
 
 	reply.Grant = true
 	if args.Term > rf.CurrentTerm {
 		rf.BecomeFollwer(args.Term)
-		// reply.Grant = true
 	} else if args.Term < rf.CurrentTerm {
 		// Reply false if term < CurrentTerm
 		// fmt.Println(rf.me, "deny", args.CandidateId, "for old term")
@@ -650,7 +620,7 @@ func (rf *Raft) sendHeartBeat() {
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-	// fmt.Println("[", rf.me, "]", "prevlogindex:", args.PrevLogIndex, "prevlogterm", args.PrevLogTerm)
+
 	reply.Success = true
 	reply.Term = max(args.Term, rf.CurrentTerm)
 
@@ -734,7 +704,6 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapshotReply) {
 	rf.mu.Lock()
-	defer rf.mu.Unlock()
 
 	if rf.CurrentTerm > args.Term {
 		reply.Term = rf.CurrentTerm
@@ -756,10 +725,10 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 	}
 
 	rf.BaseIndex = args.LastIncludedIndex
+	rf.commitIndex = args.LastIncludedIndex
 	rf.persist()
 	rf.persister.SaveSnapshot(args.Data)
-
-	rf.commitIndex = args.LastIncludedIndex
+	rf.mu.Unlock()
 
 	rf.updateApplyMu.Lock()
 	rf.lastApplied = args.LastIncludedIndex
@@ -782,13 +751,13 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 // that index. Raft should now trim its log as much as possible.
 //
 func (rf *Raft) Snapshot(index int, snapshot []byte) {
-	// fmt.Println(rf.me, "SNAPSHOT", index, rf.LastApplied())
-	if index <= rf.baseIndex() || index > rf.LastApplied() {
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+
+	if index <= rf.BaseIndex || index > rf.lastApplied {
 		return
 	}
 
-	rf.mu.Lock()
-	defer rf.mu.Unlock()
 	rf.Entry = rf.Entry[index-rf.BaseIndex:]
 	rf.BaseIndex = index
 	rf.persist()
