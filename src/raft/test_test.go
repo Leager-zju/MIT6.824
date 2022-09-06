@@ -1136,6 +1136,7 @@ func snapcommon(t *testing.T, name string, disconnect bool, reliable bool, crash
 
 		if disconnect {
 			cfg.disconnect(victim)
+			// fmt.Println(victim, "disconnect")
 			cfg.one(rand.Int(), servers-1, true)
 		}
 		if crash {
@@ -1165,6 +1166,7 @@ func snapcommon(t *testing.T, name string, disconnect bool, reliable bool, crash
 		if disconnect {
 			// reconnect a follower, who maybe behind and
 			// needs to rceive a snapshot to catch up.
+			// fmt.Println(victim, "reconnect")
 			cfg.connect(victim)
 			cfg.one(rand.Int(), servers, true)
 			leader1 = cfg.checkOneLeader()
@@ -1213,17 +1215,18 @@ func TestSnapshotAllCrash2D(t *testing.T) {
 
 	cfg.begin("Test (2D): crash and restart all servers")
 
-	cfg.one(rand.Int(), servers, true)
+	cfg.one(rand.Int()%1000, servers, true)
 
 	for i := 0; i < iters; i++ {
 		// fmt.Printf("------iter %d------\n", i)
 		// perhaps enough to get a snapshot
 		nn := (SnapShotInterval / 2) + (rand.Int() % SnapShotInterval)
+		// fmt.Println("-----nn:", nn, "-----")
 		for i := 0; i < nn; i++ {
-			cfg.one(rand.Int(), servers, true)
+			cfg.one(rand.Int()%1000, servers, true)
 		}
 
-		index1 := cfg.one(rand.Int(), servers, true)
+		index1 := cfg.one(rand.Int()%1000, servers, true)
 
 		// crash all
 		// fmt.Println("crash all")
@@ -1238,7 +1241,7 @@ func TestSnapshotAllCrash2D(t *testing.T) {
 			cfg.connect(i)
 		}
 
-		index2 := cfg.one(rand.Int(), servers, true)
+		index2 := cfg.one(rand.Int()%1000, servers, true)
 		if index2 < index1+1 {
 			t.Fatalf("index decreased from %v to %v", index1, index2)
 		}
