@@ -93,7 +93,7 @@ type Raft struct {
 
 	CurrentTerm int        // latest term server has seen (initialized to 0 on first boot, increases monotonically)
 	VoteFor     int        // candidateId that received vote in current term (or null if none)
-	Entry       []LogEntry // log[index-1] -> {term, command}
+	Entry       []LogEntry // log[index] -> {term, command}
 	raftState   RaftState
 
 	commitIndex int // index of highest log entry known to be committed (initialized to 0, increases monotonically)
