@@ -130,16 +130,12 @@ func (rf *Raft) currentTerm() int {
 }
 
 func (rf *Raft) MatchNextIndex(server int) (matchindex int, nextindex int) {
-	rf.indexSliceMu[server].RLock()
-	defer rf.indexSliceMu[server].RUnlock()
-	nextindex = rf.nextIndex[server]
 	matchindex = rf.matchIndex[server]
+	nextindex = rf.nextIndex[server]
 	return
 }
 
 func (rf *Raft) UpdateMNIndex(server, match, next int) {
-	rf.indexSliceMu[server].Lock()
-	defer rf.indexSliceMu[server].Unlock()
 	if match != -1 {
 		rf.matchIndex[server] = match
 	}
@@ -216,7 +212,7 @@ func (rf *Raft) resetTimer(isleader bool) {
 		rf.heartbeatTimer.Reset(100 * time.Millisecond)
 	} else {
 		rand.Seed(time.Now().Unix() + int64(rf.me))
-		rf.electionTimeout = rand.Intn(500) + 500
+		rf.electionTimeout = rand.Intn(350) + 150
 		rf.electionTimer.Reset(time.Duration(rf.electionTimeout) * time.Millisecond)
 	}
 }
@@ -229,9 +225,6 @@ func (rf *Raft) resetTimer(isleader bool) {
 // 		it should set nextIndex = conflictIndex.
 //
 func (rf *Raft) findNextIndex(ConflictIndex, ConflictTerm, prevLogIndex int) int {
-	rf.mu.Lock()
-	defer rf.mu.Unlock()
-
 	if ConflictTerm == 0 || rf.Entry[ConflictIndex-rf.BaseIndex].Term == ConflictTerm {
 		return ConflictIndex
 	}
@@ -276,22 +269,23 @@ func (rf *Raft) findN() {
 	sort.Ints(matchIndexSet)
 	N := matchIndexSet[len(rf.peers)/2]
 
-	rf.mu.Lock()
 	ci := rf.commitIndex
 	term := rf.Entry[N-rf.BaseIndex].Term
 	cterm := rf.CurrentTerm
-	rf.mu.Unlock()
 
 	if N > ci && term == cterm {
 		rf.UpdateCommitAndApply(N)
+	} else {
+		rf.mu.Unlock()
 	}
 }
 
 func (rf *Raft) UpdateCommitAndApply(commitIndex int) {
-	rf.mu.Lock()
+	// if commitIndex > rf.commitIndex {
+	// 	fmt.Printf("[%d] %v is going to be applied ### ci: %d la: %d\n", rf.me, rf.Entry[commitIndex-rf.BaseIndex].Command, commitIndex, rf.lastApplied)
+	// }
 	rf.commitIndex = commitIndex
 	rf.mu.Unlock()
-
 	rf.updateApplyCh <- commitIndex
 }
 
@@ -314,6 +308,7 @@ func (rf *Raft) UpdateApplyThread() {
 				rf.updateApplyMu.Lock()
 				rf.lastApplied = lastapplied
 				rf.updateApplyMu.Unlock()
+				// fmt.Printf("[%v] is going to be applied at %d\n", entries[lastapplied-baseindex].Command, lastapplied)
 				rf.applyChannel <- ApplyMsg{
 					CommandValid: true,
 					Command:      entries[lastapplied-baseindex].Command,
@@ -366,13 +361,14 @@ type InstallSnapshotReply struct {
 func (rf *Raft) BecomeLeader() {
 	rf.mu.Lock()
 	rf.raftState = Leader
+	fmt.Printf("[%d] is Leader now\n", rf.me)
 	next := len(rf.Entry) + rf.BaseIndex
 	rf.resetTimer(true)
-	rf.mu.Unlock()
 
 	for i := 0; i < len(rf.peers); i++ {
 		rf.UpdateMNIndex(i, 0, next)
 	}
+	rf.mu.Unlock()
 
 	rf.sendHeartBeat()
 }
@@ -531,10 +527,6 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 }
 
 func (rf *Raft) sendHeartBeat() {
-	rf.mu.Lock()
-	term := rf.CurrentTerm
-	rf.mu.Unlock()
-
 	for i := 0; i < len(rf.peers); i++ {
 		if i == rf.me {
 			continue
@@ -542,11 +534,13 @@ func (rf *Raft) sendHeartBeat() {
 
 		go func(server int) {
 			rf.mu.Lock()
+			term := rf.CurrentTerm
 			baseindex := rf.BaseIndex
 			commitindex := rf.commitIndex
 			length := len(rf.Entry)
 			Entry := make([]LogEntry, length)
 			copy(Entry, rf.Entry)
+			_, nextindex := rf.MatchNextIndex(server)
 			rf.mu.Unlock()
 
 			args := &AppendEntriesArgs{
@@ -558,8 +552,8 @@ func (rf *Raft) sendHeartBeat() {
 
 			args.Entry = make([]LogEntry, 0)
 
-			_, nextindex := rf.MatchNextIndex(server)
 			args.PrevLogIndex = nextindex - 1
+			args.PrevLogTerm = Entry[args.PrevLogIndex-baseindex].Term
 
 			if args.PrevLogIndex < baseindex { // send Snapshot
 				SnapshotArgs := &InstallSnapshotArgs{
@@ -573,9 +567,10 @@ func (rf *Raft) sendHeartBeat() {
 				ok := rf.peers[server].Call("Raft.InstallSnapshot", SnapshotArgs, SnapshotReply)
 
 				if ok {
+					rf.mu.Lock()
+					defer rf.mu.Unlock()
+
 					if SnapshotReply.Term > term {
-						rf.mu.Lock()
-						defer rf.mu.Unlock()
 						rf.BecomeFollwer(reply.Term)
 						return
 					}
@@ -584,17 +579,16 @@ func (rf *Raft) sendHeartBeat() {
 				return
 			}
 
-			args.PrevLogTerm = Entry[args.PrevLogIndex-baseindex].Term
 			for idx := nextindex - baseindex; idx <= length-1; idx++ {
 				args.Entry = append(args.Entry, Entry[idx])
 			}
 
 			ok := rf.peers[server].Call("Raft.AppendEntries", args, reply)
 			if ok {
+				rf.mu.Lock()
 				if reply.Term > term {
-					rf.mu.Lock()
-					defer rf.mu.Unlock()
 					rf.BecomeFollwer(reply.Term)
+					rf.mu.Unlock()
 					return
 				}
 
@@ -605,6 +599,7 @@ func (rf *Raft) sendHeartBeat() {
 				}
 				next := rf.findNextIndex(reply.ConflictIndex, reply.ConflictTerm, args.PrevLogIndex)
 				rf.UpdateMNIndex(server, -1, next)
+				rf.mu.Unlock()
 			}
 		}(i)
 	}
@@ -691,12 +686,12 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	rf.resetTimer(false)
 	ci := rf.commitIndex
 	idx := len(rf.Entry) + rf.BaseIndex - 1
-	rf.mu.Unlock()
 
 	if args.LeaderCommit > ci {
 		rf.UpdateCommitAndApply(min(args.LeaderCommit, idx))
+	} else {
+		rf.mu.Unlock()
 	}
-
 }
 
 func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapshotReply) {
@@ -781,9 +776,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 			Term:    term,
 			Command: command,
 		}
-		fmt.Printf("----START %v----\n", Log)
+		fmt.Printf("----[%d] START %v at {%d}----\n", rf.me, Log, index)
 		rf.Entry = append(rf.Entry, Log)
 		rf.persist()
+
+		go rf.sendHeartBeat()
 	}
 
 	return index, term, isleader

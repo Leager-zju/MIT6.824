@@ -3,13 +3,21 @@ package kvraft
 import (
 	"crypto/rand"
 	"math/big"
+	"sync"
+	"sync/atomic"
 
 	"6.824/src/labrpc"
 )
 
+const null int = -1
+
 type Clerk struct {
-	servers []*labrpc.ClientEnd
+	mu             sync.Mutex
+	servers        []*labrpc.ClientEnd
+	volatileLeader int
 	// You will have to modify this struct.
+	RequestId uint32
+	ClerkId   uint32
 }
 
 func nrand() int64 {
@@ -22,7 +30,10 @@ func nrand() int64 {
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	ck := new(Clerk)
 	ck.servers = servers
-	// You'll have to add code here.
+	ck.volatileLeader = null
+	ck.RequestId = 0
+	ck.ClerkId = uint32(nrand())
+
 	return ck
 }
 
@@ -32,18 +43,34 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 // keeps trying forever in the face of all other errors.
 //
 func (ck *Clerk) Get(key string) string {
-	args := &GetArgs{
-		Key: key,
-	}
-	reply := &GetReply{}
+	ck.mu.Lock()
+	defer ck.mu.Unlock()
 
-	for i := range ck.servers {
-		ok := ck.servers[i].Call("KVServer.Get", &args, &reply)
-		if ok && reply.Err == "OK" {
+	if ck.volatileLeader != null {
+		args := &GetArgs{
+			Key: key,
+		}
+		reply := &GetReply{}
+		ok := ck.servers[ck.volatileLeader].Call("KVServer.Get", args, reply)
+		if ok && reply.Err != ErrWrongLeader {
 			return reply.Value
 		}
 	}
-	// You will have to modify this function.
+
+	for {
+		for i := range ck.servers {
+			args := &GetArgs{
+				Key: key,
+			}
+			reply := &GetReply{}
+			ok := ck.servers[i].Call("KVServer.Get", args, reply)
+			if ok && reply.Err != ErrWrongLeader {
+				ck.volatileLeader = i
+				return reply.Value
+			}
+		}
+	}
+
 	return ""
 }
 
@@ -51,18 +78,70 @@ func (ck *Clerk) Get(key string) string {
 // shared by Put and Append.
 //
 func (ck *Clerk) PutAppend(key string, value string, op string) {
-	args := &PutAppendArgs{
-		Key:   key,
-		Value: value,
-		Op:    op,
-	}
-	reply := &PutAppendReply{}
-	for i := range ck.servers {
-		ok := ck.servers[i].Call("KVServer.PutAppend", &args, &reply)
-		if ok && reply.Err == "OK" {
+	ck.mu.Lock()
+	defer ck.mu.Unlock()
+
+	var mu sync.Mutex
+	cond := sync.NewCond(&mu)
+
+	if ck.volatileLeader != null {
+		args := &PutAppendArgs{
+			Key:   key,
+			Value: value,
+			Op:    op,
+			Info: Info{
+				RequestId: ck.RequestId,
+				ClerkId:   ck.ClerkId,
+			},
+		}
+		reply := &PutAppendReply{}
+		ok := ck.servers[ck.volatileLeader].Call("KVServer.PutAppend", args, reply)
+		if ok && reply.Err != ErrWrongLeader {
+			if reply.Err != ErrDuplicate {
+				atomic.AddUint32(&ck.RequestId, 1)
+			}
 			return
 		}
 	}
+
+	for {
+		total := 0
+		success := false
+		for i := range ck.servers {
+			go func(server int) {
+				args := &PutAppendArgs{
+					Key:   key,
+					Value: value,
+					Op:    op,
+				}
+				reply := &PutAppendReply{}
+				ok := ck.servers[server].Call("KVServer.PutAppend", args, reply)
+				if ok && reply.Err != ErrWrongLeader {
+					ck.volatileLeader = server
+					mu.Lock()
+					success = true
+					mu.Unlock()
+
+					if reply.Err != ErrDuplicate {
+						atomic.AddUint32(&ck.RequestId, 1)
+					}
+				}
+				mu.Lock()
+				total++
+				mu.Unlock()
+				cond.Signal()
+			}(i)
+		}
+		mu.Lock()
+		for !success && total < len(ck.servers) {
+			cond.Wait()
+		}
+		mu.Unlock()
+		if success {
+			return
+		}
+	}
+
 	// You will have to modify this function.
 }
 

@@ -1,14 +1,14 @@
 package kvraft
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"sync/atomic"
 
+	"6.824/src/labgob"
 	"6.824/src/labrpc"
 	"6.824/src/raft"
-
-	"6.824/src/labgob"
 )
 
 const Debug = false
@@ -20,12 +20,18 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 	return
 }
 
+type Void struct{}
+
+var void Void
+
 type Op struct {
 	// Field names must start with capital letters,
 	// otherwise RPC will break.
 	Operation string
 	Key       string
 	Value     string
+
+	Feedback bool
 }
 
 type KVServer struct {
@@ -33,28 +39,115 @@ type KVServer struct {
 	me      int
 	rf      *raft.Raft
 	applyCh chan raft.ApplyMsg
-	dead    int32 // set by Kill()
+
+	dead int32 // set by Kill()
 
 	maxraftstate int // snapshot if log grows this big
 
+	KVs     map[string]string
+	applied map[Info]Void
+
+	clientCh sync.Map
 	// Your definitions here.
 }
 
+// A Get for a non-existent key should return an empty string.
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
-	_, _, isleader := kv.rf.Start(Op{Operation: "Get", Key: args.Key})
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+	reply.Err = OK
+	idx, _, isleader := kv.rf.Start(Op{Operation: "Get", Key: args.Key, Feedback: true})
+
 	if !isleader {
 		reply.Err = ErrWrongLeader
 		return
+	}
+
+	for {
+		ch, ok := kv.clientCh.Load(idx)
+		if ok {
+			reply.Value = (<-ch.(chan interface{})).(string)
+			return
+		}
+	}
+	// fmt.Println("Get Value:", reply.Value)
+}
+
+// An Append to a non-existent key should act like Put.
+func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+	reply.Err = OK
+	if _, ok := kv.applied[args.Info]; ok {
+		reply.Err = ErrDuplicate
+		return
+	}
+
+	idx, _, isleader := kv.rf.Start(Op{Operation: args.Op, Key: args.Key, Value: args.Value, Feedback: true})
+
+	if !isleader {
+		reply.Err = ErrWrongLeader
+		return
+	}
+
+	for {
+		_, ok := kv.clientCh.Load(idx)
+		if ok {
+			break
+		}
+	}
+	kv.applied[args.Info] = void
+	// fmt.Println("Key:", args.Key, "Value:", kv.KVs[args.Key])
+}
+
+func (kv *KVServer) Worker() {
+	for !kv.killed() {
+		msg := <-kv.applyCh
+		if msg.CommandValid {
+			kv.Apply(msg.CommandIndex, msg.Command)
+		}
 	}
 }
 
-func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	Operation := args.Op
-	_, _, isleader := kv.rf.Start(Op{Operation: Operation, Key: args.Key})
-	if !isleader {
-		reply.Err = ErrWrongLeader
-		return
+func (kv *KVServer) Apply(index int, cmd interface{}) {
+	op := cmd.(Op)
+	ch, ok := kv.clientCh.Load(index)
+	if ok == false {
+		kv.clientCh.Store(index, make(chan interface{}, 1))
+		ch, _ = kv.clientCh.Load(index)
 	}
+
+	switch op.Operation {
+	case "Get":
+		if op.Feedback {
+			if val, ok := kv.KVs[op.Key]; ok {
+				ch.(chan interface{}) <- val
+			} else {
+				ch.(chan interface{}) <- ""
+			}
+		}
+	case "Put":
+		kv.KVs[op.Key] = op.Value
+		if op.Feedback {
+			ch.(chan interface{}) <- 0
+		}
+	case "Append":
+		val, ok := kv.KVs[op.Key]
+		if ok {
+			kv.KVs[op.Key] = val + op.Value
+		} else {
+			kv.KVs[op.Key] = op.Value
+		}
+
+		if op.Feedback {
+			ch.(chan interface{}) <- 0
+		}
+	}
+
+	if op.Feedback {
+		fmt.Printf("[%v] is applied at %d\n", cmd, index)
+	}
+
 }
 
 //
@@ -65,12 +158,11 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 // long-running loops. you can also add your own
 // code to Kill(). you're not required to do anything
 // about this, but it may be convenient (for example)
-// to suppress debug output from a Kill()ed instance.
+// to suppress debug output from a Killed() instance.
 //
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
-	// Your code here, if desired.
 }
 
 func (kv *KVServer) killed() bool {
@@ -97,15 +189,15 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	// Go's RPC library to marshall/unmarshall.
 	labgob.Register(Op{})
 
-	kv := new(KVServer)
-	kv.me = me
-	kv.maxraftstate = maxraftstate
-
-	// You may need initialization code here.
-
-	kv.applyCh = make(chan raft.ApplyMsg)
+	kv := &KVServer{
+		me:           me,
+		applyCh:      make(chan raft.ApplyMsg),
+		maxraftstate: maxraftstate,
+		KVs:          make(map[string]string),
+	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 
+	go kv.Worker()
 	// You may need initialization code here.
 
 	return kv

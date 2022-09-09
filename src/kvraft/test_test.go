@@ -3,6 +3,7 @@ package kvraft
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -283,11 +284,13 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 						last = NextValue(last, nv)
 					}
 					j++
+					// fmt.Println("APPEND", j)
 				} else if randomkeys && (rand.Int()%1000) < 100 {
 					// we only do this when using random keys, because it would break the
 					// check done after Get() operations
 					Put(cfg, myck, key, nv, opLog, cli)
 					j++
+					// fmt.Println("PUT", j)
 				} else {
 					// log.Printf("%d: client new get %v\n", cli, key)
 					v := Get(cfg, myck, key, opLog, cli)
@@ -295,6 +298,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 					if !randomkeys && v != last {
 						t.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
 					}
+					// fmt.Println("GET")
 				}
 			}
 		})
@@ -337,7 +341,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 			cfg.ConnectAll()
 		}
 
-		// log.Printf("wait for clients\n")
+		log.Printf("wait for clients\n")
 		for i := 0; i < nclients; i++ {
 			// log.Printf("read from clients %d\n", i)
 			j := <-clnts[i]
@@ -393,7 +397,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 // Check that ops are committed fast enough, better than 1 per heartbeat interval
 func GenericTestSpeed(t *testing.T, part string, maxraftstate int) {
 	const nservers = 3
-	const numOps = 1000
+	const numOps = 20
 	cfg := make_config(t, nservers, false, maxraftstate)
 	defer cfg.cleanup()
 
