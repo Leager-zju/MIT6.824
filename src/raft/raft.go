@@ -361,7 +361,7 @@ type InstallSnapshotReply struct {
 func (rf *Raft) BecomeLeader() {
 	rf.mu.Lock()
 	rf.raftState = Leader
-	fmt.Printf("[%d] is Leader now\n", rf.me)
+	// fmt.Printf("[%d] is Leader now\n", rf.me)
 	next := len(rf.Entry) + rf.BaseIndex
 	rf.resetTimer(true)
 
@@ -370,7 +370,7 @@ func (rf *Raft) BecomeLeader() {
 	}
 	rf.mu.Unlock()
 
-	rf.sendHeartBeat()
+	go rf.sendHeartBeat()
 }
 
 //
@@ -778,9 +778,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 		}
 		fmt.Printf("----[%d] START %v at {%d}----\n", rf.me, Log, index)
 		rf.Entry = append(rf.Entry, Log)
-		rf.persist()
-
 		go rf.sendHeartBeat()
+		rf.persist()
 	}
 
 	return index, term, isleader

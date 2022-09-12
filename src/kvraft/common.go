@@ -9,21 +9,18 @@ const (
 
 type Err string
 
-type Info struct {
+// Put or Append
+type PutAppendArgs struct {
+	Key       string
+	Value     string
+	Op        string // "Put" or "Append"
 	RequestId uint32
 	ClerkId   uint32
 }
 
-// Put or Append
-type PutAppendArgs struct {
-	Key   string
-	Value string
-	Op    string // "Put" or "Append"
-	Info  Info
-}
-
 type PutAppendReply struct {
-	Err Err
+	ServerID int
+	Err      Err
 }
 
 type GetArgs struct {

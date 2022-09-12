@@ -45,33 +45,48 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 func (ck *Clerk) Get(key string) string {
 	ck.mu.Lock()
 	defer ck.mu.Unlock()
+	args := &GetArgs{
+		Key: key,
+	}
 
-	if ck.volatileLeader != null {
-		args := &GetArgs{
-			Key: key,
-		}
+	// fmt.Printf("[%d]    Get Key: {%v}\n", ck.ClerkId%1000, key)
+
+	for ck.volatileLeader != null {
 		reply := &GetReply{}
 		ok := ck.servers[ck.volatileLeader].Call("KVServer.Get", args, reply)
-		if ok && reply.Err != ErrWrongLeader {
-			return reply.Value
-		}
-	}
-
-	for {
-		for i := range ck.servers {
-			args := &GetArgs{
-				Key: key,
-			}
-			reply := &GetReply{}
-			ok := ck.servers[i].Call("KVServer.Get", args, reply)
-			if ok && reply.Err != ErrWrongLeader {
-				ck.volatileLeader = i
+		if ok {
+			if reply.Err != ErrWrongLeader {
 				return reply.Value
+			} else {
+				ck.volatileLeader = null
 			}
 		}
 	}
 
-	return ""
+	var success uint32 = 0
+	ch := make(chan string, 1)
+
+	for i := range ck.servers {
+		go func(server int) {
+			for {
+				if atomic.LoadUint32(&success) == 1 {
+					return
+				}
+				reply := &GetReply{}
+				ok := ck.servers[server].Call("KVServer.Get", args, reply)
+				if ok {
+					if reply.Err != ErrWrongLeader {
+						ck.volatileLeader = server
+						atomic.StoreUint32(&success, 1)
+						ch <- reply.Value
+						return
+					}
+				}
+			}
+		}(i)
+	}
+
+	return <-ch
 }
 
 //
@@ -81,68 +96,51 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 	ck.mu.Lock()
 	defer ck.mu.Unlock()
 
-	var mu sync.Mutex
-	cond := sync.NewCond(&mu)
+	// fmt.Printf("[%d, %d]    %v Key: {%v} Value:{%v}\n", ck.ClerkId%1000, ck.RequestId, op, key, value)
+	args := &PutAppendArgs{
+		Key:       key,
+		Value:     value,
+		Op:        op,
+		RequestId: atomic.LoadUint32(&ck.RequestId),
+		ClerkId:   ck.ClerkId,
+	}
 
-	if ck.volatileLeader != null {
-		args := &PutAppendArgs{
-			Key:   key,
-			Value: value,
-			Op:    op,
-			Info: Info{
-				RequestId: ck.RequestId,
-				ClerkId:   ck.ClerkId,
-			},
-		}
+	for ck.volatileLeader != null {
 		reply := &PutAppendReply{}
 		ok := ck.servers[ck.volatileLeader].Call("KVServer.PutAppend", args, reply)
-		if ok && reply.Err != ErrWrongLeader {
-			if reply.Err != ErrDuplicate {
+		if ok {
+			if reply.Err != ErrWrongLeader {
+				// fmt.Println(ck.ClerkId%1000, "P/A at", reply.ServerID)
 				atomic.AddUint32(&ck.RequestId, 1)
+				return
+			} else {
+				ck.volatileLeader = null
 			}
-			return
 		}
 	}
 
-	for {
-		total := 0
-		success := false
-		for i := range ck.servers {
-			go func(server int) {
-				args := &PutAppendArgs{
-					Key:   key,
-					Value: value,
-					Op:    op,
+	var success uint32 = 0
+	ch := make(chan interface{}, 1)
+	for i := range ck.servers {
+		go func(server int) {
+			for {
+				if atomic.LoadUint32(&success) == 1 {
+					return
 				}
 				reply := &PutAppendReply{}
 				ok := ck.servers[server].Call("KVServer.PutAppend", args, reply)
 				if ok && reply.Err != ErrWrongLeader {
 					ck.volatileLeader = server
-					mu.Lock()
-					success = true
-					mu.Unlock()
-
-					if reply.Err != ErrDuplicate {
-						atomic.AddUint32(&ck.RequestId, 1)
-					}
+					// fmt.Println(ck.ClerkId%1000, "P/A at", reply.ServerID)
+					atomic.StoreUint32(&success, 1)
+					atomic.AddUint32(&ck.RequestId, 1)
+					ch <- 0
+					return
 				}
-				mu.Lock()
-				total++
-				mu.Unlock()
-				cond.Signal()
-			}(i)
-		}
-		mu.Lock()
-		for !success && total < len(ck.servers) {
-			cond.Wait()
-		}
-		mu.Unlock()
-		if success {
-			return
-		}
+			}
+		}(i)
 	}
-
-	// You will have to modify this function.
+	<-ch
 }
 
 func (ck *Clerk) Put(key string, value string) {

@@ -1,7 +1,6 @@
 package kvraft
 
 import (
-	"fmt"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -44,8 +43,8 @@ type KVServer struct {
 
 	maxraftstate int // snapshot if log grows this big
 
-	KVs     map[string]string
-	applied map[Info]Void
+	KVs         map[string]string
+	lastapplied map[uint32]uint32
 
 	clientCh sync.Map
 	// Your definitions here.
@@ -67,10 +66,10 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 		ch, ok := kv.clientCh.Load(idx)
 		if ok {
 			reply.Value = (<-ch.(chan interface{})).(string)
-			return
+			break
 		}
 	}
-	// fmt.Println("Get Value:", reply.Value)
+
 }
 
 // An Append to a non-existent key should act like Put.
@@ -78,9 +77,13 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 	reply.Err = OK
-	if _, ok := kv.applied[args.Info]; ok {
-		reply.Err = ErrDuplicate
-		return
+	reply.ServerID = kv.me
+
+	if ReqID, ok := kv.lastapplied[args.ClerkId]; ok {
+		if args.RequestId <= ReqID {
+			reply.Err = ErrDuplicate
+			return
+		}
 	}
 
 	idx, _, isleader := kv.rf.Start(Op{Operation: args.Op, Key: args.Key, Value: args.Value, Feedback: true})
@@ -96,8 +99,9 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 			break
 		}
 	}
-	kv.applied[args.Info] = void
-	// fmt.Println("Key:", args.Key, "Value:", kv.KVs[args.Key])
+
+	kv.lastapplied[args.ClerkId] = args.RequestId
+	// fmt.Printf("[%d] P/A Key: %v, Value: %v at %d\n", kv.me, args.Key, args.Value, idx)
 }
 
 func (kv *KVServer) Worker() {
@@ -111,11 +115,8 @@ func (kv *KVServer) Worker() {
 
 func (kv *KVServer) Apply(index int, cmd interface{}) {
 	op := cmd.(Op)
-	ch, ok := kv.clientCh.Load(index)
-	if ok == false {
-		kv.clientCh.Store(index, make(chan interface{}, 1))
-		ch, _ = kv.clientCh.Load(index)
-	}
+	kv.clientCh.Store(index, make(chan interface{}, 1))
+	ch, _ := kv.clientCh.Load(index)
 
 	switch op.Operation {
 	case "Get":
@@ -129,7 +130,7 @@ func (kv *KVServer) Apply(index int, cmd interface{}) {
 	case "Put":
 		kv.KVs[op.Key] = op.Value
 		if op.Feedback {
-			ch.(chan interface{}) <- 0
+			ch.(chan interface{}) <- ""
 		}
 	case "Append":
 		val, ok := kv.KVs[op.Key]
@@ -140,12 +141,12 @@ func (kv *KVServer) Apply(index int, cmd interface{}) {
 		}
 
 		if op.Feedback {
-			ch.(chan interface{}) <- 0
+			ch.(chan interface{}) <- ""
 		}
 	}
 
 	if op.Feedback {
-		fmt.Printf("[%v] is applied at %d\n", cmd, index)
+		// fmt.Printf("[%v] is applied at %d\n", cmd, index)
 	}
 
 }
@@ -194,6 +195,7 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 		applyCh:      make(chan raft.ApplyMsg),
 		maxraftstate: maxraftstate,
 		KVs:          make(map[string]string),
+		lastapplied:  make(map[uint32]uint32),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 
