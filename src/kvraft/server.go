@@ -4,33 +4,24 @@ import (
 	"log"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"6.824/src/labgob"
 	"6.824/src/labrpc"
 	"6.824/src/raft"
 )
 
+// const Debug = true
+
 const Debug = false
+
+const ExecutionTimeOut = time.Second
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
 		log.Printf(format, a...)
 	}
 	return
-}
-
-type Void struct{}
-
-var void Void
-
-type Op struct {
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
-	Operation string
-	Key       string
-	Value     string
-
-	Feedback bool
 }
 
 type KVServer struct {
@@ -45,110 +36,113 @@ type KVServer struct {
 
 	KVs         map[string]string
 	lastapplied map[uint32]uint32
-
-	clientCh sync.Map
-	// Your definitions here.
+	applierCh   map[int]chan string
 }
 
 // A Get for a non-existent key should return an empty string.
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 	kv.mu.Lock()
-	defer kv.mu.Unlock()
 	reply.Err = OK
-	idx, _, isleader := kv.rf.Start(Op{Operation: "Get", Key: args.Key, Feedback: true})
+	idx, _, isleader := kv.rf.Start(*args)
 
 	if !isleader {
 		reply.Err = ErrWrongLeader
+		kv.mu.Unlock()
 		return
 	}
 
-	for {
-		ch, ok := kv.clientCh.Load(idx)
-		if ok {
-			reply.Value = (<-ch.(chan interface{})).(string)
-			break
-		}
-	}
+	ch := kv.GetChannel(idx)
+	kv.mu.Unlock()
 
+	select {
+	case <-time.After(ExecutionTimeOut):
+		DPrintf("%v timeout\n", args)
+		reply.Err = ErrWrongLeader
+	case val := <-ch:
+		DPrintf("%v success ---> %s\n", args, val)
+		reply.Value = val
+	}
 }
 
 // An Append to a non-existent key should act like Put.
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	kv.mu.Lock()
-	defer kv.mu.Unlock()
 	reply.Err = OK
-	reply.ServerID = kv.me
-
-	if ReqID, ok := kv.lastapplied[args.ClerkId]; ok {
-		if args.RequestId <= ReqID {
-			reply.Err = ErrDuplicate
-			return
-		}
-	}
-
-	idx, _, isleader := kv.rf.Start(Op{Operation: args.Op, Key: args.Key, Value: args.Value, Feedback: true})
+	idx, _, isleader := kv.rf.Start(*args)
 
 	if !isleader {
+		DPrintf("%v wrongLeader\n", args)
 		reply.Err = ErrWrongLeader
+		kv.mu.Unlock()
 		return
 	}
+	ch := kv.GetChannel(idx)
+	kv.mu.Unlock()
 
-	for {
-		_, ok := kv.clientCh.Load(idx)
-		if ok {
-			break
-		}
+	select {
+	case <-time.After(ExecutionTimeOut):
+		DPrintf("%v timeout\n", args)
+		reply.Err = ErrWrongLeader
+	case err := <-ch:
+		DPrintf("%v success\n", args)
+		reply.Err = Err(err)
 	}
-
-	kv.lastapplied[args.ClerkId] = args.RequestId
-	// fmt.Printf("[%d] P/A Key: %v, Value: %v at %d\n", kv.me, args.Key, args.Value, idx)
 }
 
 func (kv *KVServer) Worker() {
 	for !kv.killed() {
 		msg := <-kv.applyCh
 		if msg.CommandValid {
-			kv.Apply(msg.CommandIndex, msg.Command)
+			kv.ApplyCommand(msg)
 		}
 	}
 }
 
-func (kv *KVServer) Apply(index int, cmd interface{}) {
-	op := cmd.(Op)
-	kv.clientCh.Store(index, make(chan interface{}, 1))
-	ch, _ := kv.clientCh.Load(index)
+func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
 
-	switch op.Operation {
-	case "Get":
-		if op.Feedback {
-			if val, ok := kv.KVs[op.Key]; ok {
-				ch.(chan interface{}) <- val
+	index := msg.CommandIndex
+
+	switch c := msg.Command.(type) {
+	case GetArgs:
+		if _, isleader := kv.rf.GetState(); isleader {
+			ch := kv.GetChannel(index)
+			if val, ok := kv.KVs[c.Key]; ok {
+				ch <- val
 			} else {
-				ch.(chan interface{}) <- ""
+				ch <- ""
 			}
 		}
-	case "Put":
-		kv.KVs[op.Key] = op.Value
-		if op.Feedback {
-			ch.(chan interface{}) <- ""
+	case PutAppendArgs:
+		// If duplicated, return immediately
+		if ReqID, ok := kv.lastapplied[c.ClerkId]; ok && c.RequestId <= ReqID {
+			ch := kv.GetChannel(index)
+			DPrintf("[%v] is duplicated %d %d\n", c, c.RequestId, ReqID)
+			ch <- string(ErrDuplicate)
+			return
 		}
-	case "Append":
-		val, ok := kv.KVs[op.Key]
-		if ok {
-			kv.KVs[op.Key] = val + op.Value
+
+		kv.lastapplied[c.ClerkId] = c.RequestId
+		if val, ok := kv.KVs[c.Key]; ok && c.Op == "Append" {
+			kv.KVs[c.Key] = val + c.Value
 		} else {
-			kv.KVs[op.Key] = op.Value
+			kv.KVs[c.Key] = c.Value
 		}
 
-		if op.Feedback {
-			ch.(chan interface{}) <- ""
+		if _, isleader := kv.rf.GetState(); isleader {
+			ch := kv.GetChannel(index)
+			ch <- string(OK)
 		}
 	}
+}
 
-	if op.Feedback {
-		// fmt.Printf("[%v] is applied at %d\n", cmd, index)
+func (kv *KVServer) GetChannel(index int) chan string {
+	if _, ok := kv.applierCh[index]; !ok {
+		kv.applierCh[index] = make(chan string, 1)
 	}
 
+	return kv.applierCh[index]
 }
 
 //
@@ -188,7 +182,8 @@ func (kv *KVServer) killed() bool {
 func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister, maxraftstate int) *KVServer {
 	// call labgob.Register on structures you want
 	// Go's RPC library to marshall/unmarshall.
-	labgob.Register(Op{})
+	labgob.Register(GetArgs{})
+	labgob.Register(PutAppendArgs{})
 
 	kv := &KVServer{
 		me:           me,
@@ -196,6 +191,7 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 		maxraftstate: maxraftstate,
 		KVs:          make(map[string]string),
 		lastapplied:  make(map[uint32]uint32),
+		applierCh:    make(map[int]chan string),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 

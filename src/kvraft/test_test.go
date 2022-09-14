@@ -199,6 +199,7 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
 				}
 			}
 		}
+		log.Println(pa[0], pa[1])
 		cfg.partition(pa[0], pa[1])
 		time.Sleep(electionTimeout + time.Duration(rand.Int63()%200)*time.Millisecond)
 	}
@@ -265,7 +266,6 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 				p := 0
 				j := 0
 				defer func() {
-					fmt.Println("---END---", cli, "and", j)
 					clnts[cli] <- j
 				}()
 				last := "" // only used when not randomkeys
@@ -274,7 +274,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 				}
 				for atomic.LoadInt32(&done_clients) == 0 {
 					var key string
-					fmt.Printf("----iter %d----\n", p)
+					log.Printf("----[%d] iter %d START----\n", myck.ClerkId%1000, p)
 					p++
 					if randomkeys {
 						key = strconv.Itoa(rand.Intn(nclients))
@@ -283,7 +283,6 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 					}
 					nv := "x " + strconv.Itoa(cli) + " " + strconv.Itoa(j) + " y"
 					if (rand.Int() % 1000) < 500 {
-						log.Printf("%d: client new append %v\n", cli, nv)
 						Append(cfg, myck, key, nv, opLog, cli)
 						if !randomkeys {
 							last = NextValue(last, nv)
@@ -292,17 +291,16 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 					} else if randomkeys && (rand.Int()%1000) < 100 {
 						// we only do this when using random keys, because it would break the
 						// check done after Get() operations
-						log.Printf("%d: client new put %v\n", cli, nv)
 						Put(cfg, myck, key, nv, opLog, cli)
 						j++
 					} else {
-						log.Printf("%d: client new get %v\n", cli, key)
 						v := Get(cfg, myck, key, opLog, cli)
 						// the following check only makes sense when we're not using random keys
 						if !randomkeys && v != last {
 							t.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
 						}
 					}
+					log.Printf("----[%d] iter %d END----\n", myck.ClerkId%1000, p-1)
 				}
 			})
 
@@ -351,9 +349,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 			// 	log.Printf("Warning: client %d managed to perform only %d put operations in 1 sec?\n", i, j)
 			// }
 			key := strconv.Itoa(i)
-			log.Printf("Check %v for client %d\n", j, i)
 			v := Get(cfg, ck, key, opLog, 0)
-			log.Printf("Get %v for client %d\n", v, i)
 			if !randomkeys {
 				checkClntAppends(t, i, v, j)
 			}
