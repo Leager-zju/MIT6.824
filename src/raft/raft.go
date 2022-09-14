@@ -2,7 +2,6 @@ package raft
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"math/rand"
 	"sort"
@@ -109,7 +108,7 @@ type Raft struct {
 	electionTimeout int
 
 	BaseIndex int
-	snapshot  *SnapShot
+	// snapshot  *SnapShot
 
 	updateApplyCh chan int
 	updateApplyMu sync.RWMutex
@@ -273,6 +272,8 @@ func (rf *Raft) findN() {
 	term := rf.Entry[N-rf.BaseIndex].Term
 	cterm := rf.CurrentTerm
 
+	// log.Println(rf.me, N, ci, term, cterm)
+
 	if N > ci && term == cterm {
 		rf.UpdateCommitAndApply(N)
 	} else {
@@ -290,31 +291,31 @@ func (rf *Raft) UpdateCommitAndApply(commitIndex int) {
 }
 
 func (rf *Raft) UpdateApplyThread() {
-	for {
-		select {
-		case commitidx := <-rf.updateApplyCh:
-			rf.mu.Lock()
-			entries := make([]LogEntry, len(rf.Entry))
-			copy(entries, rf.Entry)
-			baseindex := rf.BaseIndex
-			rf.mu.Unlock()
+	for commitidx := range rf.updateApplyCh {
+		rf.mu.Lock()
+		entries := make([]LogEntry, len(rf.Entry))
+		copy(entries, rf.Entry)
+		baseindex := rf.BaseIndex
+		rf.mu.Unlock()
 
+		rf.updateApplyMu.Lock()
+		lastapplied := rf.lastApplied
+		rf.updateApplyMu.Unlock()
+
+		for lastapplied < commitidx {
+			lastapplied++
 			rf.updateApplyMu.Lock()
-			lastapplied := rf.lastApplied
+			rf.lastApplied = lastapplied
 			rf.updateApplyMu.Unlock()
-
-			for lastapplied < commitidx {
-				lastapplied++
-				rf.updateApplyMu.Lock()
-				rf.lastApplied = lastapplied
-				rf.updateApplyMu.Unlock()
-				// fmt.Printf("[%v] is going to be applied at %d\n", entries[lastapplied-baseindex].Command, lastapplied)
-				rf.applyChannel <- ApplyMsg{
-					CommandValid: true,
-					Command:      entries[lastapplied-baseindex].Command,
-					CommandIndex: lastapplied,
-				}
+			// fmt.Printf("[%v] is going to be applied at %d\n", entries[lastapplied-baseindex].Command, lastapplied)
+			rf.applyChannel <- ApplyMsg{
+				CommandValid: true,
+				Command:      entries[lastapplied-baseindex].Command,
+				CommandIndex: lastapplied,
 			}
+			// if _, isleader := rf.GetState(); isleader {
+			// 	fmt.Printf("[%v] is applied at %d\n", entries[lastapplied-baseindex].Command, lastapplied)
+			// }
 		}
 	}
 }
@@ -384,6 +385,7 @@ func (rf *Raft) BecomeCandidate() {
 	rf.CurrentTerm++
 	rf.VoteFor = rf.me
 	rf.raftState = Candidate
+	// log.Printf("[%d] candidate term %d\n", rf.me, rf.CurrentTerm)
 	rf.resetTimer(false)
 	rf.persist()
 	rf.mu.Unlock()
@@ -776,7 +778,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 			Term:    term,
 			Command: command,
 		}
-		fmt.Printf("----[%d] START %v at {%d}----\n", rf.me, Log, index)
+		log.Printf("[%d] START %v at {%d}\n", rf.me, Log, index)
 		rf.Entry = append(rf.Entry, Log)
 		go rf.sendHeartBeat()
 		rf.persist()
@@ -809,7 +811,7 @@ func (rf *Raft) killed() bool {
 // heartsbeats recently.
 //
 func (rf *Raft) ticker() {
-	for rf.killed() == false {
+	for !rf.killed() {
 		select {
 		case <-rf.electionTimer.C:
 			if _, isleader := rf.GetState(); !isleader {

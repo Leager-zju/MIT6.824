@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"os"
 
-	"6.824/src/pbservice"
+	"6.824/src/src/src/src/src/src/src/src/src/src/src/pbservice"
 )
 
 func usage() {
