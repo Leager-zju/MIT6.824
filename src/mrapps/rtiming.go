@@ -75,6 +75,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 	kva = append(kva, mr.KeyValue{"h", "1"})
 	kva = append(kva, mr.KeyValue{"i", "1"})
 	kva = append(kva, mr.KeyValue{"j", "1"})
+
 	return kva
 }
 

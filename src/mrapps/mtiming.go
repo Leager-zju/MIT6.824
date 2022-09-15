@@ -78,6 +78,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 	kva = append(kva, mr.KeyValue{
 		fmt.Sprintf("parallel-%v", pid),
 		fmt.Sprintf("%d", n)})
+
 	return kva
 }
 
@@ -90,5 +91,6 @@ func Reduce(key string, values []string) string {
 	sort.Strings(vv)
 
 	val := strings.Join(vv, " ")
+
 	return val
 }

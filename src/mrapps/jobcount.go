@@ -31,6 +31,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 		panic(err)
 	}
 	time.Sleep(time.Duration(2000+rand.Intn(3000)) * time.Millisecond)
+
 	return []mr.KeyValue{mr.KeyValue{"a", "x"}}
 }
 
@@ -45,5 +46,6 @@ func Reduce(key string, values []string) string {
 			invocations++
 		}
 	}
+
 	return strconv.Itoa(invocations)
 }

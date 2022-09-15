@@ -212,7 +212,7 @@ func (rn *Network) isServerDead(endname interface{}, servername interface{}, ser
 	rn.mu.Lock()
 	defer rn.mu.Unlock()
 
-	if rn.enabled[endname] == false || rn.servers[servername] != server {
+	if !rn.enabled[endname] || rn.servers[servername] != server {
 		return true
 	}
 	return false
@@ -222,13 +222,13 @@ func (rn *Network) processReq(req reqMsg) {
 	enabled, servername, server, reliable, longreordering := rn.readEndnameInfo(req.endname)
 
 	if enabled && servername != nil && server != nil {
-		if reliable == false {
+		if !reliable {
 			// short delay
 			ms := (rand.Int() % 27)
 			time.Sleep(time.Duration(ms) * time.Millisecond)
 		}
 
-		if reliable == false && (rand.Int()%1000) < 100 {
+		if !reliable && (rand.Int()%1000) < 100 {
 			// drop the request, return as if timeout
 			req.replyCh <- replyMsg{false, nil}
 			return
@@ -250,7 +250,7 @@ func (rn *Network) processReq(req reqMsg) {
 		var reply replyMsg
 		replyOK := false
 		serverDead := false
-		for replyOK == false && serverDead == false {
+		for !replyOK && !serverDead {
 			select {
 			case reply = <-ech:
 				replyOK = true
@@ -272,13 +272,13 @@ func (rn *Network) processReq(req reqMsg) {
 		// DeleteServer() before superseding the Persister.
 		serverDead = rn.isServerDead(req.endname, servername, server)
 
-		if replyOK == false || serverDead == true {
+		if !replyOK || serverDead {
 			// server was killed while we were waiting; return error.
 			req.replyCh <- replyMsg{false, nil}
-		} else if reliable == false && (rand.Int()%1000) < 100 {
+		} else if !reliable && (rand.Int()%1000) < 100 {
 			// drop the reply, return as if timeout
 			req.replyCh <- replyMsg{false, nil}
-		} else if longreordering == true && rand.Intn(900) < 600 {
+		} else if longreordering && rand.Intn(900) < 600 {
 			// delay the response for a while
 			ms := 200 + rand.Intn(1+rand.Intn(2000))
 			// Russ points out that this timer arrangement will decrease
@@ -423,7 +423,7 @@ func (rs *Server) dispatch(req reqMsg) replyMsg {
 		return service.dispatch(methodName, req)
 	} else {
 		choices := []string{}
-		for k, _ := range rs.services {
+		for k := range rs.services {
 			choices = append(choices, k)
 		}
 		log.Fatalf("labrpc.Server.dispatch(): unknown service %v in %v.%v; expecting one of %v\n",
@@ -506,7 +506,7 @@ func (svc *Service) dispatch(methname string, req reqMsg) replyMsg {
 		return replyMsg{true, rb.Bytes()}
 	} else {
 		choices := []string{}
-		for k, _ := range svc.methods {
+		for k := range svc.methods {
 			choices = append(choices, k)
 		}
 		log.Fatalf("labrpc.Service.dispatch(): unknown method %v in %v; expecting one of %v\n",

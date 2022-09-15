@@ -29,6 +29,7 @@ func Map(document string, value string) (res []mr.KeyValue) {
 		kv := mr.KeyValue{w, document}
 		res = append(res, kv)
 	}
+
 	return
 }
 

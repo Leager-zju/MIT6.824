@@ -385,7 +385,6 @@ func make_config(t *testing.T, n int, unreliable bool, maxraftstate int) *config
 	for i := 0; i < cfg.n; i++ {
 		cfg.StartServer(i)
 	}
-
 	cfg.ConnectAll()
 
 	cfg.net.Reliable(!unreliable)

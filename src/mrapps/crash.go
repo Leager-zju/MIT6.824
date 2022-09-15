@@ -42,6 +42,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 	kva = append(kva, mr.KeyValue{"b", strconv.Itoa(len(filename))})
 	kva = append(kva, mr.KeyValue{"c", strconv.Itoa(len(contents))})
 	kva = append(kva, mr.KeyValue{"d", "xyzzy"})
+
 	return kva
 }
 
@@ -54,5 +55,6 @@ func Reduce(key string, values []string) string {
 	sort.Strings(vv)
 
 	val := strings.Join(vv, " ")
+
 	return val
 }

@@ -45,14 +45,11 @@ var KvModel = porcupine.Model{
 		out := output.(KvOutput)
 		st := state.(string)
 		if inp.Op == 0 {
-			// get
-			return out.Value == st, state
+			return out.Value == st, state // get
 		} else if inp.Op == 1 {
-			// put
-			return true, inp.Value
+			return true, inp.Value // put
 		} else {
-			// append
-			return true, (st + inp.Value)
+			return true, (st + inp.Value) // append
 		}
 	},
 	DescribeOperation: func(input, output interface{}) string {

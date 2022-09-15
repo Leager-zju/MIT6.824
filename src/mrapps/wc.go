@@ -33,6 +33,7 @@ func Map(filename string, contents string) []mr.KeyValue {
 		kv := mr.KeyValue{w, "1"}
 		kva = append(kva, kv)
 	}
+
 	return kva
 }
 

@@ -21,6 +21,7 @@ import (
 func Map(filename string, contents string) []mr.KeyValue {
 	kva := []mr.KeyValue{}
 	kva = append(kva, mr.KeyValue{filename, "1"})
+
 	return kva
 }
 
