@@ -124,11 +124,11 @@ func (cfg *config) connectUnlocked(i int, to []int) {
 	}
 }
 
-func (cfg *config) connect(i int, to []int) {
-	cfg.mu.Lock()
-	defer cfg.mu.Unlock()
-	cfg.connectUnlocked(i, to)
-}
+// func (cfg *config) connect(i int, to []int) {
+// 	cfg.mu.Lock()
+// 	defer cfg.mu.Unlock()
+// 	cfg.connectUnlocked(i, to)
+// }
 
 // detach server i from the servers listed in from
 // caller must hold cfg.mu
@@ -152,11 +152,11 @@ func (cfg *config) disconnectUnlocked(i int, from []int) {
 	}
 }
 
-func (cfg *config) disconnect(i int, from []int) {
-	cfg.mu.Lock()
-	defer cfg.mu.Unlock()
-	cfg.disconnectUnlocked(i, from)
-}
+// func (cfg *config) disconnect(i int, from []int) {
+// 	cfg.mu.Lock()
+// 	defer cfg.mu.Unlock()
+// 	cfg.disconnectUnlocked(i, from)
+// }
 
 func (cfg *config) All() []int {
 	all := make([]int, cfg.n)
@@ -416,7 +416,7 @@ func (cfg *config) op() {
 // and some performance numbers.
 func (cfg *config) end() {
 	cfg.checkTimeout()
-	if cfg.t.Failed() == false {
+	if !cfg.t.Failed() {
 		t := time.Since(cfg.t0).Seconds()  // real time
 		npeers := cfg.n                    // number of Raft peers
 		nrpc := cfg.rpcTotal() - cfg.rpcs0 // number of RPC sends

@@ -3,6 +3,7 @@ package kvraft
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -126,7 +127,7 @@ func spawn_clients_and_wait(t *testing.T, cfg *config, ncli int, fn func(me int,
 		ok := <-ca[cli]
 		// log.Printf("spawn_clients_and_wait: client %d is done\n", cli)
 		if ok == false {
-			t.Fatalf("failure")
+			log.Fatalf("failure")
 		}
 	}
 }
@@ -272,7 +273,6 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 				}
 				for atomic.LoadInt32(&done_clients) == 0 {
 					var key string
-					// log.Printf("----[%d] iter %d START----\n", myck.ClerkId%1000, p)
 					p++
 					if randomkeys {
 						key = strconv.Itoa(rand.Intn(nclients))
@@ -295,7 +295,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 						v := Get(cfg, myck, key, opLog, cli)
 						// the following check only makes sense when we're not using random keys
 						if !randomkeys && v != last {
-							t.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
+							log.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
 						}
 					}
 					// log.Printf("----[%d] iter %d END----\n", myck.ClerkId%1000, p-1)
