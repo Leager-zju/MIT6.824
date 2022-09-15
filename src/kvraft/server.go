@@ -47,6 +47,7 @@ func (kv *KVServer) MakeSnapshot() []byte {
 	w := new(bytes.Buffer)
 	e := labgob.NewEncoder(w)
 	e.Encode(kv.baseIndex)
+	e.Encode(kv.baseRaftStateSize)
 	e.Encode(keys)
 	e.Encode(vals)
 	data := w.Bytes()
@@ -62,8 +63,9 @@ type KVServer struct {
 
 	dead int32 // set by Kill()
 
-	maxraftstate int // snapshot if log grows this big
-	baseIndex    int
+	maxraftstate      int // snapshot if log grows this big
+	baseIndex         int
+	baseRaftStateSize int
 
 	KVs         map[string]string
 	lastapplied map[uint32]uint32
@@ -125,16 +127,19 @@ func (kv *KVServer) Worker() {
 		msg := <-kv.applyCh
 		raftSize := kv.persister.RaftStateSize()
 		// log.Printf("BaseIndex is %d and MaxRaftState is %d\n", kv.baseIndex, kv.maxraftstate)
-		if kv.maxraftstate != -1 && raftSize-kv.baseIndex >= kv.maxraftstate {
-			kv.baseIndex = raftSize
-			log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
-			go kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
-		}
+
 		if msg.CommandValid {
 			kv.ApplyCommand(msg)
 		} else if msg.SnapshotValid {
 			kv.ApplySnapshot()
 		}
+
+		if kv.maxraftstate != -1 && raftSize-kv.baseRaftStateSize >= kv.maxraftstate {
+			kv.baseIndex = msg.CommandIndex
+			// log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
+			kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
+		}
+
 	}
 }
 
@@ -188,16 +193,20 @@ func (kv *KVServer) ApplySnapshot() {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
+	var baseIndex int
+	var baseRaftStateSize int
 	var keys []string
 	var vals []string
 
-	if d.Decode(&kv.baseIndex) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil {
+	if d.Decode(&baseIndex) != nil || d.Decode(&baseRaftStateSize) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
 	} else {
 		for i, k := range keys {
 			v := vals[i]
 			kv.KVs[k] = v
 		}
+		kv.baseIndex = baseIndex
+		kv.baseRaftStateSize = baseRaftStateSize
 	}
 }
 
