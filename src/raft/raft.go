@@ -268,6 +268,11 @@ func (rf *Raft) findN() {
 	sort.Ints(matchIndexSet)
 	N := matchIndexSet[len(rf.peers)/2]
 
+	if N < rf.BaseIndex {
+		rf.mu.Unlock()
+		return
+	}
+
 	ci := rf.commitIndex
 	term := rf.Entry[N-rf.BaseIndex].Term
 	cterm := rf.CurrentTerm
@@ -362,7 +367,7 @@ type InstallSnapshotReply struct {
 func (rf *Raft) BecomeLeader() {
 	rf.mu.Lock()
 	rf.raftState = Leader
-	// fmt.Printf("[%d] is Leader now\n", rf.me)
+	// log.Printf("[%d] is Leader now\n", rf.me)
 	next := len(rf.Entry) + rf.BaseIndex
 	rf.resetTimer(true)
 
@@ -555,7 +560,6 @@ func (rf *Raft) sendHeartBeat() {
 			args.Entry = make([]LogEntry, 0)
 
 			args.PrevLogIndex = nextindex - 1
-			args.PrevLogTerm = Entry[args.PrevLogIndex-baseindex].Term
 
 			if args.PrevLogIndex < baseindex { // send Snapshot
 				SnapshotArgs := &InstallSnapshotArgs{
@@ -580,6 +584,8 @@ func (rf *Raft) sendHeartBeat() {
 				}
 				return
 			}
+
+			args.PrevLogTerm = Entry[args.PrevLogIndex-baseindex].Term
 
 			for idx := nextindex - baseindex; idx <= length-1; idx++ {
 				args.Entry = append(args.Entry, Entry[idx])
@@ -748,6 +754,7 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 // that index. Raft should now trim its log as much as possible.
 //
 func (rf *Raft) Snapshot(index int, snapshot []byte) {
+
 	rf.updateApplyMu.Lock()
 	la := rf.lastApplied
 	rf.updateApplyMu.Unlock()
@@ -756,6 +763,7 @@ func (rf *Raft) Snapshot(index int, snapshot []byte) {
 	defer rf.mu.Unlock()
 
 	if index <= rf.BaseIndex || index > la {
+		log.Printf("[%d] Snapshot fail\n", rf.me)
 		return
 	}
 
@@ -778,7 +786,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 			Term:    term,
 			Command: command,
 		}
-		log.Printf("[%d] START %v at {%d}\n", rf.me, Log, index)
+		// log.Printf("[%d] START %v at {%d}\n", rf.me, Log, index)
 		rf.Entry = append(rf.Entry, Log)
 		go rf.sendHeartBeat()
 		rf.persist()

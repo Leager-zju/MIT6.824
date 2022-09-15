@@ -1,6 +1,7 @@
 package kvraft
 
 import (
+	"bytes"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -15,7 +16,7 @@ import (
 
 const Debug = false
 
-const ExecutionTimeOut = time.Second
+const ExecutionTimeOut = 500 * time.Millisecond
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
@@ -24,15 +25,45 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 	return
 }
 
+func (kv *KVServer) GetChannel(index int) chan string {
+	if _, ok := kv.applierCh[index]; !ok {
+		kv.applierCh[index] = make(chan string, 1)
+	}
+
+	return kv.applierCh[index]
+}
+
+func (kv *KVServer) MakeSnapshot() []byte {
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+
+	keys := make([]string, 0)
+	vals := make([]string, 0)
+	for k, v := range kv.KVs {
+		keys = append(keys, k)
+		vals = append(vals, v)
+	}
+
+	w := new(bytes.Buffer)
+	e := labgob.NewEncoder(w)
+	e.Encode(kv.baseIndex)
+	e.Encode(keys)
+	e.Encode(vals)
+	data := w.Bytes()
+	return data
+}
+
 type KVServer struct {
-	mu      sync.Mutex
-	me      int
-	rf      *raft.Raft
-	applyCh chan raft.ApplyMsg
+	mu        sync.Mutex
+	me        int
+	rf        *raft.Raft
+	applyCh   chan raft.ApplyMsg
+	persister *raft.Persister
 
 	dead int32 // set by Kill()
 
 	maxraftstate int // snapshot if log grows this big
+	baseIndex    int
 
 	KVs         map[string]string
 	lastapplied map[uint32]uint32
@@ -56,10 +87,10 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 
 	select {
 	case <-time.After(ExecutionTimeOut):
-		DPrintf("%v timeout\n", args)
+		DPrintf("[%d] %v timeout\n", kv.me, args)
 		reply.Err = ErrWrongLeader
 	case val := <-ch:
-		DPrintf("%v success ---> %s\n", args, val)
+		DPrintf("[%d] %v success ---> %s\n", kv.me, args, val)
 		reply.Value = val
 	}
 }
@@ -71,7 +102,7 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	idx, _, isleader := kv.rf.Start(*args)
 
 	if !isleader {
-		DPrintf("%v wrongLeader\n", args)
+		DPrintf("[%d] %v wrongLeader\n", kv.me, args)
 		reply.Err = ErrWrongLeader
 		kv.mu.Unlock()
 		return
@@ -81,10 +112,10 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 
 	select {
 	case <-time.After(ExecutionTimeOut):
-		DPrintf("%v timeout\n", args)
+		DPrintf("[%d] %v timeout\n", kv.me, args)
 		reply.Err = ErrWrongLeader
 	case err := <-ch:
-		DPrintf("%v success\n", args)
+		DPrintf("[%d] %v success\n", kv.me, args)
 		reply.Err = Err(err)
 	}
 }
@@ -92,8 +123,17 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 func (kv *KVServer) Worker() {
 	for !kv.killed() {
 		msg := <-kv.applyCh
+		raftSize := kv.persister.RaftStateSize()
+		// log.Printf("BaseIndex is %d and MaxRaftState is %d\n", kv.baseIndex, kv.maxraftstate)
+		if kv.maxraftstate != -1 && raftSize-kv.baseIndex >= kv.maxraftstate {
+			kv.baseIndex = raftSize
+			log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
+			go kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
+		}
 		if msg.CommandValid {
 			kv.ApplyCommand(msg)
+		} else if msg.SnapshotValid {
+			kv.ApplySnapshot()
 		}
 	}
 }
@@ -137,12 +177,28 @@ func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
 	}
 }
 
-func (kv *KVServer) GetChannel(index int) chan string {
-	if _, ok := kv.applierCh[index]; !ok {
-		kv.applierCh[index] = make(chan string, 1)
+func (kv *KVServer) ApplySnapshot() {
+	data := kv.persister.ReadSnapshot()
+	if data == nil || len(data) < 1 { // bootstrap without any state?
+		return
 	}
+	r := bytes.NewBuffer(data)
+	d := labgob.NewDecoder(r)
 
-	return kv.applierCh[index]
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+
+	var keys []string
+	var vals []string
+
+	if d.Decode(&kv.baseIndex) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil {
+		log.Fatalf("ApplySnapshot Decode Error\n")
+	} else {
+		for i, k := range keys {
+			v := vals[i]
+			kv.KVs[k] = v
+		}
+	}
 }
 
 //
@@ -188,15 +244,17 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	kv := &KVServer{
 		me:           me,
 		applyCh:      make(chan raft.ApplyMsg),
+		persister:    persister,
 		maxraftstate: maxraftstate,
+		baseIndex:    0,
 		KVs:          make(map[string]string),
 		lastapplied:  make(map[uint32]uint32),
 		applierCh:    make(map[int]chan string),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
+	kv.ApplySnapshot()
 
 	go kv.Worker()
-	// You may need initialization code here.
 
 	return kv
 }

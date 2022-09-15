@@ -3,7 +3,6 @@ package kvraft
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -199,7 +198,6 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
 				}
 			}
 		}
-		log.Println(pa[0], pa[1])
 		cfg.partition(pa[0], pa[1])
 		time.Sleep(electionTimeout + time.Duration(rand.Int63()%200)*time.Millisecond)
 	}
@@ -258,7 +256,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 		clnts[i] = make(chan int)
 	}
 	for i := 0; i < 3; i++ {
-		log.Printf("Iteration %v\n", i)
+		// log.Printf("Iteration %v\n", i)
 		atomic.StoreInt32(&done_clients, 0)
 		atomic.StoreInt32(&done_partitioner, 0)
 		go spawn_clients_and_wait(t, cfg, nclients,
@@ -274,7 +272,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 				}
 				for atomic.LoadInt32(&done_clients) == 0 {
 					var key string
-					log.Printf("----[%d] iter %d START----\n", myck.ClerkId%1000, p)
+					// log.Printf("----[%d] iter %d START----\n", myck.ClerkId%1000, p)
 					p++
 					if randomkeys {
 						key = strconv.Itoa(rand.Intn(nclients))
@@ -300,7 +298,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 							t.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
 						}
 					}
-					log.Printf("----[%d] iter %d END----\n", myck.ClerkId%1000, p-1)
+					// log.Printf("----[%d] iter %d END----\n", myck.ClerkId%1000, p-1)
 				}
 			})
 
@@ -315,7 +313,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 		atomic.StoreInt32(&done_partitioner, 1) // tell partitioner to quit
 
 		if partitions {
-			log.Printf("wait for partitioner\n")
+			// log.Printf("wait for partitioner\n")
 			<-ch_partitioner
 			// reconnect network and submit a request. A client may
 			// have submitted a request in a minority.  That request
@@ -343,7 +341,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 		}
 
 		for i := 0; i < nclients; i++ {
-			log.Printf("read from clients %d\n", i)
+			// log.Printf("read from clients %d\n", i)
 			j := <-clnts[i]
 			// if j < 10 {
 			// 	log.Printf("Warning: client %d managed to perform only %d put operations in 1 sec?\n", i, j)
@@ -493,7 +491,7 @@ func TestOnePartition3A(t *testing.T) {
 	cfg.begin("Test: progress in majority (3A)")
 
 	p1, p2 := cfg.make_partition()
-	fmt.Println(p1, p2)
+	// fmt.Println(p1, p2)
 	cfg.partition(p1, p2)
 
 	ckp1 := cfg.makeClient(p1)  // connect ckp1 to p1
