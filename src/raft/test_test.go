@@ -42,7 +42,7 @@ func TestInitialElection2A(t *testing.T) {
 	time.Sleep(2 * RaftElectionTimeout)
 	term2 := cfg.checkTerms()
 	if term1 != term2 {
-		// fmt.Printf("warning: term changed even though there were no failures")
+		DPrintf("warning: term changed even though there were no failures")
 	}
 
 	// there should still be a leader.
@@ -593,6 +593,7 @@ func TestCount2B(t *testing.T) {
 	}
 
 	leader := cfg.checkOneLeader()
+	DPrintf("Leader is %d now", leader)
 
 	total1 := rpcs()
 

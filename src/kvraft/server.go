@@ -39,17 +39,26 @@ func (kv *KVServer) MakeSnapshot() []byte {
 
 	keys := make([]string, 0)
 	vals := make([]string, 0)
+
+	clientId := make([]uint32, 0)
+	requestId := make([]uint32, 0)
+
 	for k, v := range kv.KVs {
 		keys = append(keys, k)
 		vals = append(vals, v)
+	}
+	for c, r := range kv.lastapplied {
+		clientId = append(clientId, c)
+		requestId = append(requestId, r)
 	}
 
 	w := new(bytes.Buffer)
 	e := labgob.NewEncoder(w)
 	e.Encode(kv.baseIndex)
-	e.Encode(kv.baseRaftStateSize)
 	e.Encode(keys)
 	e.Encode(vals)
+	e.Encode(clientId)
+	e.Encode(requestId)
 	data := w.Bytes()
 	return data
 }
@@ -63,9 +72,8 @@ type KVServer struct {
 
 	dead int32 // set by Kill()
 
-	maxraftstate      int // snapshot if log grows this big
-	baseIndex         int
-	baseRaftStateSize int
+	maxraftstate int // snapshot if log grows this big
+	baseIndex    int
 
 	KVs         map[string]string
 	lastapplied map[uint32]uint32
@@ -122,7 +130,7 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	}
 }
 
-func (kv *KVServer) Worker() {
+func (kv *KVServer) Applier() {
 	for !kv.killed() {
 		msg := <-kv.applyCh
 		raftSize := kv.persister.RaftStateSize()
@@ -130,14 +138,15 @@ func (kv *KVServer) Worker() {
 
 		if msg.CommandValid {
 			kv.ApplyCommand(msg)
-		} else if msg.SnapshotValid {
-			kv.ApplySnapshot()
-		}
 
-		if kv.maxraftstate != -1 && raftSize-kv.baseRaftStateSize >= kv.maxraftstate {
-			kv.baseIndex = msg.CommandIndex
-			// log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
-			kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
+			if kv.maxraftstate != -1 && raftSize >= kv.maxraftstate {
+				kv.baseIndex = msg.CommandIndex
+				// log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
+				kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
+			}
+		} else if msg.SnapshotValid {
+			kv.baseIndex = msg.SnapshotIndex
+			kv.ApplySnapshot()
 		}
 
 	}
@@ -194,20 +203,28 @@ func (kv *KVServer) ApplySnapshot() {
 	defer kv.mu.Unlock()
 
 	var baseIndex int
-	var baseRaftStateSize int
 	var keys []string
 	var vals []string
+	var clientId []uint32
+	var requestId []uint32
 
-	if d.Decode(&baseIndex) != nil || d.Decode(&baseRaftStateSize) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil {
+	if d.Decode(&baseIndex) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil || d.Decode(&clientId) != nil || d.Decode(&requestId) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
 	} else {
 		for i, k := range keys {
 			v := vals[i]
 			kv.KVs[k] = v
 		}
+		for i, c := range clientId {
+			r := requestId[i]
+			kv.lastapplied[c] = r
+		}
 		kv.baseIndex = baseIndex
-		kv.baseRaftStateSize = baseRaftStateSize
 	}
+}
+
+func (kv *KVServer) Snapshoter() {
+
 }
 
 //
@@ -263,7 +280,7 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 	kv.ApplySnapshot()
 
-	go kv.Worker()
+	go kv.Applier()
 
 	return kv
 }
