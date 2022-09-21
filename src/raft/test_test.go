@@ -593,7 +593,6 @@ func TestCount2B(t *testing.T) {
 	}
 
 	leader := cfg.checkOneLeader()
-	DPrintf("Leader is %d now", leader)
 
 	total1 := rpcs()
 
