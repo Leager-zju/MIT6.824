@@ -102,9 +102,8 @@ type Raft struct {
 	nextIndex   []int
 	matchIndex  []int
 
-	applyChannel   chan ApplyMsg
-	applyCond      *sync.Cond
-	replicatorCond []*sync.Cond
+	applyChannel chan ApplyMsg
+	applyCond    *sync.Cond
 
 	electionTimer  *time.Timer
 	heartbeatTimer *time.Timer
@@ -379,26 +378,6 @@ func (rf *Raft) Applier() {
 		rf.lastApplied = max(rf.lastApplied, CommitIndex)
 		rf.mu.Unlock()
 	}
-}
-
-func (rf *Raft) Replicator(peer int) {
-	rf.replicatorCond[peer].L.Lock()
-	defer rf.replicatorCond[peer].L.Unlock()
-
-	// for !rf.killed() {
-	// 	for !rf.NeedReplicate(peer) {
-	// 		rf.replicatorCond[peer].Wait()
-	// 	}
-
-	// 	DPrintf("[%d %d %v] Replicator(%d) start for next %d < lastindex %d", rf.me, rf.CurrentTerm, rf.raftState, peer, rf.nextIndex[peer], rf.Entry[len(rf.Entry)-1].Index)
-	// 	rf.SendHeartBeat(peer)
-	// }
-}
-
-func (rf *Raft) NeedReplicate(peer int) bool {
-	rf.mu.RLock()
-	defer rf.mu.RUnlock()
-	return rf.raftState == Leader && rf.matchIndex[peer] < rf.Entry[len(rf.Entry)-1].Index
 }
 
 //
@@ -795,8 +774,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 		nextIndex:   make([]int, len(peers)),
 		matchIndex:  make([]int, len(peers)),
 
-		applyChannel:   applyCh,
-		replicatorCond: make([]*sync.Cond, len(peers)),
+		applyChannel: applyCh,
 
 		electionTimer:  time.NewTimer(0),
 		heartbeatTimer: time.NewTimer(0),
@@ -808,10 +786,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
 	for peer := range rf.peers {
 		rf.UpdateMatchNextIndex(peer, 0, rf.Entry[len(rf.Entry)-1].Index+1)
-		if peer != rf.me {
-			rf.replicatorCond[peer] = sync.NewCond(&sync.Mutex{})
-			go rf.Replicator(peer)
-		}
 	}
 	DPrintf("[%d %d %v] make success", rf.me, rf.CurrentTerm, rf.raftState)
 	go rf.Ticker()
