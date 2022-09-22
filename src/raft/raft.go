@@ -293,6 +293,7 @@ func (rf *Raft) GetAppendEntriesArg(prevLogIndex int) *AppendEntriesArgs {
 	}
 
 	args.Entry = append(args.Entry, rf.Entry[prevLogIndex+1-rf.GetBaseLog().Index:]...)
+
 	return args
 }
 
@@ -714,7 +715,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 		rf.Entry = append(rf.Entry, Log)
 		go rf.StartHeartbeat(false)
 		rf.Persist()
-		DPrintf("[%d %d %v] START %+v at {%d}\n", rf.me, rf.CurrentTerm, rf.raftState, Log, index)
+		DPrintf("[%d %d %v] START %+v", rf.me, rf.CurrentTerm, rf.raftState, Log)
 	}
 
 	return index, term, isleader

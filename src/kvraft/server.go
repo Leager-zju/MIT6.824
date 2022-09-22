@@ -18,6 +18,11 @@ const Debug = false
 
 const ExecutionTimeOut = 500 * time.Millisecond
 
+type ReplyContext struct {
+	RequestID uint32
+	Err       Err
+}
+
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
 		log.Printf(format, a...)
@@ -25,174 +30,17 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 	return
 }
 
-func (kv *KVServer) GetChannel(index int) chan string {
-	if _, ok := kv.applierCh[index]; !ok {
-		kv.applierCh[index] = make(chan string, 1)
-	}
-
-	return kv.applierCh[index]
-}
-
 func (kv *KVServer) MakeSnapshot() []byte {
-	kv.mu.Lock()
-	defer kv.mu.Unlock()
-
-	keys := make([]string, 0)
-	vals := make([]string, 0)
-
-	clientId := make([]uint32, 0)
-	requestId := make([]uint32, 0)
-
-	for k, v := range kv.KVs {
-		keys = append(keys, k)
-		vals = append(vals, v)
-	}
-	for c, r := range kv.lastapplied {
-		clientId = append(clientId, c)
-		requestId = append(requestId, r)
-	}
-
 	w := new(bytes.Buffer)
 	e := labgob.NewEncoder(w)
-	e.Encode(kv.baseIndex)
-	e.Encode(keys)
-	e.Encode(vals)
-	e.Encode(clientId)
-	e.Encode(requestId)
+	e.Encode(kv.KVs)
+	e.Encode(kv.lastReplyContext)
+	e.Encode(kv.lastapplied)
 	data := w.Bytes()
 	return data
 }
 
-type KVServer struct {
-	mu        sync.Mutex
-	me        int
-	rf        *raft.Raft
-	applyCh   chan raft.ApplyMsg
-	persister *raft.Persister
-
-	dead int32 // set by Kill()
-
-	maxraftstate int // snapshot if log grows this big
-	baseIndex    int
-
-	KVs         map[string]string
-	lastapplied map[uint32]uint32
-	applierCh   map[int]chan string
-}
-
-// A Get for a non-existent key should return an empty string.
-func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
-	kv.mu.Lock()
-	reply.Err = OK
-	idx, _, isleader := kv.rf.Start(*args)
-
-	if !isleader {
-		reply.Err = ErrWrongLeader
-		kv.mu.Unlock()
-		return
-	}
-
-	ch := kv.GetChannel(idx)
-	kv.mu.Unlock()
-
-	select {
-	case <-time.After(ExecutionTimeOut):
-		DPrintf("[%d] %v timeout\n", kv.me, args)
-		reply.Err = ErrWrongLeader
-	case val := <-ch:
-		DPrintf("[%d] %v success ---> %s\n", kv.me, args, val)
-		reply.Value = val
-	}
-}
-
-// An Append to a non-existent key should act like Put.
-func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	kv.mu.Lock()
-	reply.Err = OK
-	idx, _, isleader := kv.rf.Start(*args)
-
-	if !isleader {
-		DPrintf("[%d] %v wrongLeader\n", kv.me, args)
-		reply.Err = ErrWrongLeader
-		kv.mu.Unlock()
-		return
-	}
-	ch := kv.GetChannel(idx)
-	kv.mu.Unlock()
-
-	select {
-	case <-time.After(ExecutionTimeOut):
-		DPrintf("[%d] %v timeout\n", kv.me, args)
-		reply.Err = ErrWrongLeader
-	case err := <-ch:
-		DPrintf("[%d] %v success\n", kv.me, args)
-		reply.Err = Err(err)
-	}
-}
-
-func (kv *KVServer) Applier() {
-	for !kv.killed() {
-		msg := <-kv.applyCh
-		raftSize := kv.persister.RaftStateSize()
-		// log.Printf("BaseIndex is %d and MaxRaftState is %d\n", kv.baseIndex, kv.maxraftstate)
-
-		if msg.CommandValid {
-			kv.ApplyCommand(msg)
-
-			if kv.maxraftstate != -1 && raftSize >= kv.maxraftstate {
-				kv.baseIndex = msg.CommandIndex
-				// log.Printf("[%d] Snapshot at %d", kv.me, kv.baseIndex)
-				kv.rf.Snapshot(msg.CommandIndex, kv.MakeSnapshot())
-			}
-		} else if msg.SnapshotValid {
-			kv.baseIndex = msg.SnapshotIndex
-			kv.ApplySnapshot()
-		}
-
-	}
-}
-
-func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
-	kv.mu.Lock()
-	defer kv.mu.Unlock()
-
-	index := msg.CommandIndex
-
-	switch c := msg.Command.(type) {
-	case GetArgs:
-		if _, isleader := kv.rf.GetState(); isleader {
-			ch := kv.GetChannel(index)
-			if val, ok := kv.KVs[c.Key]; ok {
-				ch <- val
-			} else {
-				ch <- ""
-			}
-		}
-	case PutAppendArgs:
-		// If duplicated, return immediately
-		if ReqID, ok := kv.lastapplied[c.ClerkId]; ok && c.RequestId <= ReqID {
-			ch := kv.GetChannel(index)
-			DPrintf("[%v] is duplicated %d %d\n", c, c.RequestId, ReqID)
-			ch <- string(ErrDuplicate)
-			return
-		}
-
-		kv.lastapplied[c.ClerkId] = c.RequestId
-		if val, ok := kv.KVs[c.Key]; ok && c.Op == "Append" {
-			kv.KVs[c.Key] = val + c.Value
-		} else {
-			kv.KVs[c.Key] = c.Value
-		}
-
-		if _, isleader := kv.rf.GetState(); isleader {
-			ch := kv.GetChannel(index)
-			ch <- string(OK)
-		}
-	}
-}
-
-func (kv *KVServer) ApplySnapshot() {
-	data := kv.persister.ReadSnapshot()
+func (kv *KVServer) ApplySnapshot(data []byte) {
 	if data == nil || len(data) < 1 { // bootstrap without any state?
 		return
 	}
@@ -202,29 +50,132 @@ func (kv *KVServer) ApplySnapshot() {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	var baseIndex int
-	var keys []string
-	var vals []string
-	var clientId []uint32
-	var requestId []uint32
-
-	if d.Decode(&baseIndex) != nil || d.Decode(&keys) != nil || d.Decode(&vals) != nil || d.Decode(&clientId) != nil || d.Decode(&requestId) != nil {
+	if d.Decode(&kv.KVs) != nil || d.Decode(&kv.lastReplyContext) != nil || d.Decode(&kv.lastapplied) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
-	} else {
-		for i, k := range keys {
-			v := vals[i]
-			kv.KVs[k] = v
-		}
-		for i, c := range clientId {
-			r := requestId[i]
-			kv.lastapplied[c] = r
-		}
-		kv.baseIndex = baseIndex
 	}
 }
 
-func (kv *KVServer) Snapshoter() {
+func (kv *KVServer) NeedSnapshot() bool {
+	return kv.maxraftstate != -1 && kv.persister.RaftStateSize() >= kv.maxraftstate
+}
 
+type KVServer struct {
+	mu        sync.RWMutex
+	me        int
+	rf        *raft.Raft
+	applyCh   chan raft.ApplyMsg
+	persister *raft.Persister
+
+	dead int32
+
+	maxraftstate int // snapshot if log grows this big
+	lastapplied  int
+
+	KVs              map[string]string
+	lastReplyContext map[uint32]*ReplyContext // clerkID -> {RequestID, reply} (Put or Append)
+
+	snapshotCond *sync.Cond
+}
+
+func (kv *KVServer) isDuplicated(RequestID, ClerkID uint32) bool {
+	replyContext, ok := kv.lastReplyContext[ClerkID]
+	return ok && replyContext.RequestID >= RequestID
+}
+
+func (kv *KVServer) HandleRequest(args *Args, reply *Reply) {
+	kv.mu.Lock()
+	if args.Op != "Get" && kv.isDuplicated(args.RequestId, args.ClerkId) {
+		reply.Err = kv.lastReplyContext[args.ClerkId].Err
+		kv.mu.Unlock()
+		return
+	}
+	args.Ch = make(chan *Reply)
+	idx, _, isleader := kv.rf.Start(*args)
+
+	if !isleader {
+		reply.Err = ErrWrongLeader
+		kv.mu.Unlock()
+		return
+	}
+
+	DPrintf("[%d] client %d new Request %+v at idx %d", kv.me, args.ClerkId%1000, args, idx)
+	ch := args.Ch
+	kv.mu.Unlock()
+
+	select {
+	case <-time.After(ExecutionTimeOut):
+		reply.Err = ErrWrongLeader
+		DPrintf("[%d] %+v timeout", kv.me, args)
+	case result := <-ch:
+		reply.Value, reply.Err = result.Value, result.Err
+		DPrintf("[%d] %+v success, get reply {%+v}", kv.me, args, reply)
+	}
+
+}
+
+func (kv *KVServer) Applier() {
+	for !kv.killed() {
+		msg := <-kv.applyCh
+		if msg.CommandValid {
+			kv.mu.Lock()
+			if msg.CommandIndex > kv.lastapplied {
+				kv.ApplyCommand(msg)
+				kv.lastapplied = msg.CommandIndex
+				if kv.NeedSnapshot() {
+					DPrintf("[%d] snapshot", kv.me)
+					data := kv.MakeSnapshot()
+					go kv.rf.Snapshot(msg.CommandIndex, data)
+				}
+			}
+			kv.mu.Unlock()
+		} else if msg.SnapshotValid {
+			kv.ApplySnapshot(msg.Snapshot)
+		}
+	}
+}
+
+func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
+	command := msg.Command.(Args)
+	ch := command.Ch
+	reply := new(Reply)
+
+	if command.Op == "Get" {
+		val, ok := kv.KVs[command.Key]
+		if ok {
+			reply.Value, reply.Err = val, OK
+		} else {
+			reply.Value, reply.Err = "", ErrNoKey
+		}
+	} else if kv.isDuplicated(command.RequestId, command.ClerkId) {
+		reply.Err = kv.lastReplyContext[command.ClerkId].Err
+	} else {
+		if command.Op == "Put" {
+			kv.KVs[command.Key] = command.Value
+			reply.Err = OK
+		} else if command.Op == "Append" {
+			_, ok := kv.KVs[command.Key]
+			if ok {
+				kv.KVs[command.Key] += command.Value
+				reply.Err = OK
+			} else {
+				kv.KVs[command.Key] = command.Value
+				reply.Err = ErrNoKey
+			}
+		} else {
+			log.Fatalf("command.op error!")
+		}
+
+		kv.lastReplyContext[command.ClerkId] = &ReplyContext{
+			RequestID: command.RequestId,
+			Err:       reply.Err,
+		}
+	}
+
+	DPrintf("[%d] try to ApplyCommand{%+v} and Get reply {%+v}", kv.me, msg, reply)
+
+	if kv.rf.GetRaftState() == raft.Leader && kv.rf.GetCurrentTerm() == msg.CommandTerm {
+		go func(reply_ *Reply) { ch <- reply_ }(reply)
+	}
 }
 
 //
@@ -264,21 +215,19 @@ func (kv *KVServer) killed() bool {
 func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister, maxraftstate int) *KVServer {
 	// call labgob.Register on structures you want
 	// Go's RPC library to marshall/unmarshall.
-	labgob.Register(GetArgs{})
-	labgob.Register(PutAppendArgs{})
+	labgob.Register(Args{})
 
 	kv := &KVServer{
-		me:           me,
-		applyCh:      make(chan raft.ApplyMsg),
-		persister:    persister,
-		maxraftstate: maxraftstate,
-		baseIndex:    0,
-		KVs:          make(map[string]string),
-		lastapplied:  make(map[uint32]uint32),
-		applierCh:    make(map[int]chan string),
+		me:               me,
+		applyCh:          make(chan raft.ApplyMsg),
+		persister:        persister,
+		maxraftstate:     maxraftstate,
+		KVs:              make(map[string]string),
+		lastReplyContext: make(map[uint32]*ReplyContext),
+		snapshotCond:     sync.NewCond(new(sync.Mutex)),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
-	kv.ApplySnapshot()
+	kv.ApplySnapshot(kv.persister.ReadSnapshot())
 
 	go kv.Applier()
 
