@@ -50,11 +50,6 @@ func (ck *Clerk) SendRequest(args *Args) string {
 	}
 }
 
-//
-// fetch the current value for a key.
-// returns "" if the key does not exist.
-// keeps trying forever in the face of all other errors.
-//
 func (ck *Clerk) Get(key string) string {
 	return ck.SendRequest(&Args{
 		Key: key,
