@@ -18,7 +18,7 @@ const Debug = false
 
 const ExecutionTimeOut = 500 * time.Millisecond
 
-type ReplyContext struct {
+type RequestInfo struct {
 	RequestID uint32
 	Err       Err
 }
@@ -34,7 +34,7 @@ func (kv *KVServer) MakeSnapshot() []byte {
 	w := new(bytes.Buffer)
 	e := labgob.NewEncoder(w)
 	e.Encode(kv.KVs)
-	e.Encode(kv.lastReplyContext)
+	e.Encode(kv.lastRequestInfo)
 	e.Encode(kv.lastapplied)
 	data := w.Bytes()
 	return data
@@ -50,7 +50,7 @@ func (kv *KVServer) ApplySnapshot(data []byte) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	if d.Decode(&kv.KVs) != nil || d.Decode(&kv.lastReplyContext) != nil || d.Decode(&kv.lastapplied) != nil {
+	if d.Decode(&kv.KVs) != nil || d.Decode(&kv.lastRequestInfo) != nil || d.Decode(&kv.lastapplied) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
 	}
 }
@@ -71,20 +71,19 @@ type KVServer struct {
 	maxraftstate int // snapshot if log grows this big
 	lastapplied  int
 
-	KVs              map[string]string
-	lastReplyContext map[uint32]*ReplyContext // clerkID -> {RequestID, reply} (Put or Append)
-
+	KVs             map[string]string
+	lastRequestInfo map[uint32]*RequestInfo // clerkID -> {RequestID, Err} (Put or Append)
 }
 
 func (kv *KVServer) isDuplicated(RequestID, ClerkID uint32) bool {
-	replyContext, ok := kv.lastReplyContext[ClerkID]
+	replyContext, ok := kv.lastRequestInfo[ClerkID]
 	return ok && replyContext.RequestID >= RequestID
 }
 
 func (kv *KVServer) HandleRequest(args *Args, reply *Reply) {
 	kv.mu.Lock()
 	if args.Op != "Get" && kv.isDuplicated(args.RequestId, args.ClerkId) {
-		reply.Err = kv.lastReplyContext[args.ClerkId].Err
+		reply.Err = kv.lastRequestInfo[args.ClerkId].Err
 		kv.mu.Unlock()
 		return
 	}
@@ -146,7 +145,7 @@ func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
 			reply.Value, reply.Err = "", ErrNoKey
 		}
 	} else if kv.isDuplicated(command.RequestId, command.ClerkId) {
-		reply.Err = kv.lastReplyContext[command.ClerkId].Err
+		reply.Err = kv.lastRequestInfo[command.ClerkId].Err
 	} else {
 		if command.Op == "Put" {
 			kv.KVs[command.Key] = command.Value
@@ -164,7 +163,7 @@ func (kv *KVServer) ApplyCommand(msg raft.ApplyMsg) {
 			log.Fatalf("command.op error!")
 		}
 
-		kv.lastReplyContext[command.ClerkId] = &ReplyContext{
+		kv.lastRequestInfo[command.ClerkId] = &RequestInfo{
 			RequestID: command.RequestId,
 			Err:       reply.Err,
 		}
@@ -192,12 +191,12 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	labgob.Register(Args{})
 
 	kv := &KVServer{
-		me:               me,
-		applyCh:          make(chan raft.ApplyMsg),
-		persister:        persister,
-		maxraftstate:     maxraftstate,
-		KVs:              make(map[string]string),
-		lastReplyContext: make(map[uint32]*ReplyContext),
+		me:              me,
+		applyCh:         make(chan raft.ApplyMsg),
+		persister:       persister,
+		maxraftstate:    maxraftstate,
+		KVs:             make(map[string]string),
+		lastRequestInfo: make(map[uint32]*RequestInfo),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 	kv.ApplySnapshot(kv.persister.ReadSnapshot())
