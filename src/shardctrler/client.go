@@ -7,15 +7,14 @@ package shardctrler
 import (
 	"crypto/rand"
 	"math/big"
-	"time"
 
-	"6.824/src/labrpc"
+	"6.824/labrpc"
 )
 
 type Clerk struct {
 	servers        []*labrpc.ClientEnd
-	ClerkID        int64
-	RequestID      int
+	ClerkId        int64
+	RequestId      int
 	volatileLeader int
 }
 
@@ -29,31 +28,24 @@ func nrand() int64 {
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	return &Clerk{
 		servers:        servers,
-		ClerkID:        nrand(),
-		RequestID:      0,
+		ClerkId:        nrand(),
+		RequestId:      0,
 		volatileLeader: 0,
 	}
 }
 
 func (ck *Clerk) SendRequest(args *Args) Config {
-	args.ClerkID, args.RequestID = ck.ClerkID, ck.RequestID
+	args.ClerkId, args.RequestId = ck.ClerkId, ck.RequestId
 	for {
 		reply := &Reply{}
 		ok := ck.servers[ck.volatileLeader].Call("ShardCtrler.HandleRequest", args, reply)
 		if ok && reply.Err != ErrWrongLeader {
-			ck.RequestID++
+			ck.RequestId++
 			return reply.Config
 		}
-		time.Sleep(100 * time.Millisecond)
+		// time.Sleep(100 * time.Millisecond)
 		ck.volatileLeader = (ck.volatileLeader + 1) % len(ck.servers)
 	}
-}
-
-func (ck *Clerk) Query(num int) Config {
-	return ck.SendRequest(&Args{
-		Op:  Query,
-		Num: num,
-	})
 }
 
 func (ck *Clerk) Join(servers map[int][]string) {
@@ -75,5 +67,12 @@ func (ck *Clerk) Move(shard int, gid int) {
 		Op:    Move,
 		Shard: shard,
 		GIDs:  []int{gid},
+	})
+}
+
+func (ck *Clerk) Query(num int) Config {
+	return ck.SendRequest(&Args{
+		Op:  Query,
+		Num: num,
 	})
 }

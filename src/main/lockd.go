@@ -16,7 +16,7 @@ import (
 	"os"
 	"time"
 
-	"6.824/src/lockservice"
+	"6.824/lockservice"
 )
 
 func main() {

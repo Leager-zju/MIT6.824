@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"6.824/src/mr"
+	"6.824/mr"
 )
 
 var count int

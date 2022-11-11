@@ -1,5 +1,7 @@
 package shardkv
 
+import "6.824/shardctrler"
+
 //
 // Sharded key/value server.
 // Lots of replica groups, each running Raft.
@@ -14,31 +16,49 @@ const (
 	ErrNoKey       = "ErrNoKey"
 	ErrWrongGroup  = "ErrWrongGroup"
 	ErrWrongLeader = "ErrWrongLeader"
+	ErrDuplicated  = "ErrDuplicated"
+	ErrScale       = "ErrScale"
 )
 
 type Err string
 
-// Put or Append
-type PutAppendArgs struct {
-	// You'll have to add definitions here.
-	Key   string
-	Value string
-	Op    string // "Put" or "Append"
-	// You'll have to add definitions here.
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
+type Shard struct {
+	KVs     map[string]string
+	Version int
 }
 
-type PutAppendReply struct {
-	Err Err
+type Args struct {
+	Key       string
+	Value     string
+	Op        string
+	ClerkId   int64
+	RequestId int
+	Ch        chan *Reply
+
+	Data interface{}
 }
 
-type GetArgs struct {
-	Key string
-	// You'll have to add definitions here.
-}
-
-type GetReply struct {
+type Reply struct {
 	Err   Err
 	Value string
+}
+
+type ShardExchangeArgs struct {
+	ShardId int
+	Version int
+}
+
+type ShardExchangeReply struct {
+	Err   Err
+	Shard Shard
+}
+
+type ConfigInfo struct {
+	LastConfig shardctrler.Config
+	NewConfig  shardctrler.Config
+}
+
+type ShardInfo struct {
+	Shard Shard
+	Sid   int
 }

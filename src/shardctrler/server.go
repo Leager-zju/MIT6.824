@@ -4,11 +4,30 @@ import (
 	"log"
 	"sort"
 	"sync"
+	"time"
 
-	"6.824/src/labgob"
-	"6.824/src/labrpc"
-	"6.824/src/raft"
+	"6.824/labgob"
+	"6.824/labrpc"
+	"6.824/raft"
 )
+
+// const Debug = false
+
+const Debug = true
+
+const ExecutionTimeOut = 500 * time.Millisecond
+
+func DPrintf(format string, a ...interface{}) (n int, err error) {
+	if Debug {
+		log.Printf(format, a...)
+	}
+	return
+}
+
+type RequestInfo struct {
+	RequestID int
+	Err       Err
+}
 
 type ShardCtrler struct {
 	mu      sync.RWMutex
@@ -16,7 +35,7 @@ type ShardCtrler struct {
 	applyCh chan raft.ApplyMsg
 	rf      *raft.Raft
 
-	lastRequestInfo map[int64]int // clerkID -> requestID
+	lastRequestInfo map[int64]*RequestInfo // clerkID -> requestID
 	// Your data here.
 
 	configs []Config // indexed by config num
@@ -29,19 +48,9 @@ const (
 	Query
 )
 
-// const Debug = false
-const Debug = true
-
-func DPrintf(format string, a ...interface{}) (n int, err error) {
-	if Debug {
-		log.Printf(format, a...)
-	}
-	return
-}
-
-func (sc *ShardCtrler) isDuplicated(ClerkID int64, RequestID int) bool {
-	lastRequest, ok := sc.lastRequestInfo[ClerkID]
-	return ok && lastRequest >= RequestID
+func (sc *ShardCtrler) isDuplicated(RequestID int, ClerkID int64) bool {
+	lastRequestInfo, ok := sc.lastRequestInfo[ClerkID]
+	return ok && lastRequestInfo.RequestID >= RequestID
 }
 
 func (sc *ShardCtrler) makeNewConfig() *Config {
@@ -96,13 +105,13 @@ func (sc *ShardCtrler) shuffleShard(config *Config) {
 func (sc *ShardCtrler) HandleRequest(args *Args, reply *Reply) {
 	sc.mu.Lock()
 
-	if args.Op != Query && sc.isDuplicated(args.ClerkID, args.RequestID) {
-		reply.Err = ErrDuplicated
+	if args.Op != Query && sc.isDuplicated(args.RequestId, args.ClerkId) {
+		reply.Err = sc.lastRequestInfo[args.ClerkId].Err
 		sc.mu.Unlock()
 		return
 	}
 
-	args.ch = make(chan *Reply)
+	args.Ch = make(chan *Reply)
 	_, _, isleader := sc.Raft().Start(*args)
 
 	if !isleader {
@@ -110,14 +119,20 @@ func (sc *ShardCtrler) HandleRequest(args *Args, reply *Reply) {
 		sc.mu.Unlock()
 		return
 	}
-	ch := args.ch
+	ch := args.Ch
 	sc.mu.Unlock()
 
-	result := <-ch
-	reply.Err, reply.Config = result.Err, result.Config
+	select {
+	case <-time.After(ExecutionTimeOut):
+		reply.Err = ErrWrongLeader
+		// DPrintf("[ShardCtrler]: %+v timeout", args)
+	case result := <-ch:
+		reply.Config, reply.Err = result.Config, result.Err
+		// DPrintf("[ShardCtrler]: %+v success, get reply {%+v}", args, reply)
+	}
 }
 
-func (sc *ShardCtrler) Worker() {
+func (sc *ShardCtrler) Applier() {
 	for msg := range sc.applyCh {
 		if msg.CommandValid {
 			sc.mu.Lock()
@@ -129,17 +144,18 @@ func (sc *ShardCtrler) Worker() {
 
 func (sc *ShardCtrler) ApplyCommand(msg raft.ApplyMsg) {
 	args := msg.Command.(Args)
+	ch := args.Ch
 	reply := new(Reply)
-	ch := args.ch
 
 	if args.Op == Query {
+		reply.Err = OK
 		if args.Num == -1 || args.Num >= len(sc.configs) {
 			reply.Config = sc.configs[len(sc.configs)-1]
 		} else {
 			reply.Config = sc.configs[args.Num]
 		}
-	} else if sc.isDuplicated(args.ClerkID, args.RequestID) {
-		reply.Err = ErrDuplicated
+	} else if sc.isDuplicated(args.RequestId, args.ClerkId) {
+		reply.Err = sc.lastRequestInfo[args.ClerkId].Err
 	} else {
 		newconfig := sc.makeNewConfig()
 
@@ -157,21 +173,23 @@ func (sc *ShardCtrler) ApplyCommand(msg raft.ApplyMsg) {
 			}
 			sc.shuffleShard(newconfig)
 		}
+		DPrintf("[ShardCtrler]: NewConfig %+v", newconfig)
 		sc.configs = append(sc.configs, *newconfig)
-		sc.lastRequestInfo[args.ClerkID] = args.RequestID
+		sc.lastRequestInfo[args.ClerkId] = &RequestInfo{
+			RequestID: args.RequestId,
+			Err:       reply.Err,
+		}
 	}
 
 	if sc.rf.GetRaftState() == raft.Leader && sc.rf.GetCurrentTerm() == msg.CommandTerm {
-		go func() { ch <- reply }()
+		go func(reply_ *Reply) { ch <- reply_ }(reply)
 	}
 }
 
-//
 // the tester calls Kill() when a ShardCtrler instance won't
 // be needed again. you are not required to do anything
 // in Kill(), but it might be convenient to (for example)
 // turn off debug output from this instance.
-//
 func (sc *ShardCtrler) Kill() {
 	sc.rf.Kill()
 	// Your code here, if desired.
@@ -182,18 +200,16 @@ func (sc *ShardCtrler) Raft() *raft.Raft {
 	return sc.rf
 }
 
-//
 // servers[] contains the ports of the set of
 // servers that will cooperate via Raft to
 // form the fault-tolerant shardctrler service.
 // me is the index of the current server in servers[].
-//
 func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister) *ShardCtrler {
 	sc := new(ShardCtrler)
 	sc.me = me
 	sc.applyCh = make(chan raft.ApplyMsg)
 	sc.rf = raft.Make(servers, me, persister, sc.applyCh)
-	sc.lastRequestInfo = make(map[int64]int)
+	sc.lastRequestInfo = make(map[int64]*RequestInfo)
 
 	sc.configs = make([]Config, 1)
 	sc.configs[0].Groups = map[int][]string{}
@@ -201,7 +217,7 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister)
 	labgob.Register(Args{})
 
 	// Your code here.
-	go sc.Worker()
+	go sc.Applier()
 
 	return sc
 }

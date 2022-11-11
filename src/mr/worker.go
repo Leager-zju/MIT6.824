@@ -12,9 +12,7 @@ import (
 	"time"
 )
 
-//
 // Map functions return a slice of KeyValue.
-//
 type KeyValue struct {
 	Key   string
 	Value string
@@ -36,10 +34,8 @@ func (a ByKey) Len() int           { return len(a) }
 func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
-//
 // use ihash(key) % NReduce to choose the reduce
 // task number for each KeyValue emitted by Map.
-//
 func ihash(key string) int {
 	h := fnv.New32a()
 	h.Write([]byte(key))
@@ -84,14 +80,14 @@ func Worker(mapf func(string, string) []KeyValue,
 				temp[hash] = append(temp[hash], kv)
 			}
 			for i := 0; i < len(temp); i++ {
-				ofile, _ := ioutil.TempFile("/home/leager/go/src/6.824/src/mr/mapfile", fmt.Sprintf("%d", i))
+				ofile, _ := ioutil.TempFile("/home/leager/go/6.824/6.824/6.824/mr/mapfile", fmt.Sprintf("%d", i))
 				enc := json.NewEncoder(ofile)
 				for _, kv := range temp[i] {
 					enc.Encode(&kv)
 				}
 
 				old_path := ofile.Name()
-				new_path := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-%d-%d", mapTaskNumber, i)
+				new_path := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-%d-%d", mapTaskNumber, i)
 
 				os.Rename(old_path, new_path)
 				ofile.Close()
@@ -107,12 +103,12 @@ func Worker(mapf func(string, string) []KeyValue,
 
 			// ofilename := fmt.Sprintf("mr-out-%d", reduceTaskNumber)
 			// ofile, _ := os.Create(ofilename)
-			ofile, _ := ioutil.TempFile("/home/leager/go/src/6.824/src/mr/reducefile", fmt.Sprintf("%d", reduceTaskNumber))
+			ofile, _ := ioutil.TempFile("/home/leager/go/6.824/6.824/6.824/mr/reducefile", fmt.Sprintf("%d", reduceTaskNumber))
 
 			var kva []KeyValue
 
 			for i := 0; i < reply.M; i++ {
-				iFilename := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-%d-%d", i, reduceTaskNumber)
+				iFilename := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-%d-%d", i, reduceTaskNumber)
 				iFile, err := os.Open(iFilename)
 				if err == nil {
 					// fmt.Printf("mr-%d-%d: read success\n", i, reduceTaskNumber)
@@ -148,7 +144,7 @@ func Worker(mapf func(string, string) []KeyValue,
 			}
 
 			old_path := ofile.Name()
-			new_path := fmt.Sprintf("/home/leager/go/src/6.824/src/main/mr-tmp/mr-out-%d", reduceTaskNumber)
+			new_path := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-out-%d", reduceTaskNumber)
 
 			// no reduce task finished yet before
 			if _, err := os.Open(new_path); err != nil {
@@ -192,11 +188,9 @@ func CallFinish(finish TaskType, timestamp time.Time, m int, r int) {
 	call("Master.Finished", &message, &reply)
 }
 
-//
 // send an RPC request to the master, wait for the response.
 // usually returns true.
 // returns false if something goes wrong.
-//
 func call(rpcname string, message interface{}, reply interface{}) bool {
 	// c, err := rpc.DialHTTP("tcp", "127.0.0.1"+":1234")
 	c, err := rpc.DialHTTP("unix", "mr-socket")

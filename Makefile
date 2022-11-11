@@ -10,17 +10,17 @@ LABS=" lab1 lab2a lab2b lab2c lab2d lab3a lab3b lab4a lab4b "
 	@if echo $(LABS) | grep -q " $@ " ; then \
 		echo "Tarring up your submission..." ; \
 		COPYFILE_DISABLE=1 tar cvzf $@-handin.tar.gz \
-			"--exclude=src/main/pg-*.txt" \
-			"--exclude=src/main/diskvd" \
-			"--exclude=src/mapreduce/824-mrinput-*.txt" \
-			"--exclude=src/main/mr-*" \
+			"--exclude=6.824/src/main/pg-*.txt" \
+			"--exclude=6.824/src/main/diskvd" \
+			"--exclude=6.824/src/mapreduce/824-mrinput-*.txt" \
+			"--exclude=6.824/src/main/mr-*" \
 			"--exclude=mrtmp.*" \
-			"--exclude=src/main/diff.out" \
-			"--exclude=src/main/mrcoordinator" \
-			"--exclude=src/main/mrsequential" \
-			"--exclude=src/main/mrworker" \
+			"--exclude=6.824/src/main/diff.out" \
+			"--exclude=6.824/src/main/mrcoordinator" \
+			"--exclude=6.824/src/main/mrsequential" \
+			"--exclude=6.824/src/main/mrworker" \
 			"--exclude=*.so" \
-			Makefile src; \
+			Makefile 6.824/src; \
 		if ! test -e api.key ; then \
 			echo "Missing $(PWD)/api.key. Please create the file with your key in it or submit the $@-handin.tar.gz via the web interface."; \
 		else \

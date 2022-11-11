@@ -1,0 +1,844 @@
+Test: join then leave ...
+2022/11/11 08:12:21 [ShardCtrler]: NewConfig &{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}
+2022/11/11 08:12:21 [ShardCtrler]: NewConfig &{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}
+2022/11/11 08:12:21 [ShardCtrler]: NewConfig &{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}
+2022/11/11 08:12:21 key 0 -> shard 8 :0 4603427682602932194 0
+2022/11/11 08:12:21 [102 1] send msg {LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 0
+2022/11/11 08:12:21 [102 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [102 1] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:21 [102 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [102 0] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:21 [102 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [102 2] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 0
+2022/11/11 08:12:21 [101 2] send msg {LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}
+2022/11/11 08:12:21 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [101 2] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:21 [100 2] send msg {LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1}]
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 0
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1}]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:0xc0003a5c80 Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1} {map[] 1}]
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:0xc0003a5c80 Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] &{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:0xc0003a5c80 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 1 -> shard 9 :100 4603427682602932194 1
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:OnNbp Op:Put ClerkId:4603427682602932194 RequestId:0 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:0xc0003a5e60 Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:0xc0003a5e60 Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] &{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:0xc0003a5e60 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 2 -> shard 0 :100 4603427682602932194 2
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OPsVs Op:Put ClerkId:4603427682602932194 RequestId:1 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:0xc0003a4480 Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:0xc0003a4480 Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 2] &{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:0xc0003a4480 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 3 -> shard 1 :100 4603427682602932194 3
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:M8RPi Op:Put ClerkId:4603427682602932194 RequestId:2 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:0xc0003a4960 Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:0xc0003a4960 Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] &{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:0xc0003a4960 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 4 -> shard 2 :100 4603427682602932194 4
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:IN3MU Op:Put ClerkId:4603427682602932194 RequestId:3 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:0xc000322360 Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:0xc000322360 Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] &{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:0xc000322360 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 5 -> shard 3 :100 4603427682602932194 5
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:lLy8O Op:Put ClerkId:4603427682602932194 RequestId:4 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:0xc0003a4fc0 Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:0xc0003a4fc0 Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] &{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:0xc0003a4fc0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 6 -> shard 4 :100 4603427682602932194 6
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:nFQYq Op:Put ClerkId:4603427682602932194 RequestId:5 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:0xc0003a5500 Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:0xc0003a5500 Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 2] &{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:0xc0003a5500 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 7 -> shard 5 :100 4603427682602932194 7
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:c8ATz Op:Put ClerkId:4603427682602932194 RequestId:6 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:0xc000322ba0 Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:0xc000322ba0 Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] &{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:0xc000322ba0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 8 -> shard 6 :100 4603427682602932194 8
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:0xc000323200 Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:0xc000323200 Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:E4maK Op:Put ClerkId:4603427682602932194 RequestId:7 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:9 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] &{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:0xc000323200 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 key 9 -> shard 7 :100 4603427682602932194 9
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:3w4GY Op:Put ClerkId:4603427682602932194 RequestId:8 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:10 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:0xc0001984e0 Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:0xc0001984e0 Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 [100 2] &{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:0xc0001984e0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #0
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 10
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:1ejUH Op:Put ClerkId:4603427682602932194 RequestId:9 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:11 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:0xc000198c00 Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:0xc000198c00 Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 2] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] &{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:0xc000198c00 Data:<nil>} success, get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 #1
+2022/11/11 08:12:21 key 1 -> shard 9 :100 4603427682602932194 11
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 1] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:10 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:12 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 0] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:0xc000026840 Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:0xc000026840 Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 2] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] &{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:0xc000026840 Data:<nil>} success, get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 #2
+2022/11/11 08:12:21 key 2 -> shard 0 :100 4603427682602932194 12
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 0] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:0xc000323aa0 Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:11 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:13 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 1] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:0xc000323aa0 Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 2] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 2] &{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:0xc000323aa0 Data:<nil>} success, get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 #3
+2022/11/11 08:12:21 key 3 -> shard 1 :100 4603427682602932194 13
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 1] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:12 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:14 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 0] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:0xc000274000 Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:0xc000274000 Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 2] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] &{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:0xc000274000 Data:<nil>} success, get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 #4
+2022/11/11 08:12:21 key 4 -> shard 2 :100 4603427682602932194 14
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 0] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:0xc000242d80 Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:0xc000242d80 Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:13 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:15 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 1] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] &{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:0xc000242d80 Data:<nil>} success, get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 #5
+2022/11/11 08:12:21 key 5 -> shard 3 :100 4603427682602932194 15
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 0] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:14 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:16 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 1] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:0xc0000270e0 Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:0xc0000270e0 Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 2] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] &{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:0xc0000270e0 Data:<nil>} success, get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 #6
+2022/11/11 08:12:21 key 6 -> shard 4 :100 4603427682602932194 16
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 1] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:0xc000027680 Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:0xc000027680 Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 2] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:15 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:17 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 0] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] &{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:0xc000027680 Data:<nil>} success, get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 #7
+2022/11/11 08:12:21 key 7 -> shard 5 :100 4603427682602932194 17
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 0] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:0xc000026ea0 Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:0xc000026ea0 Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 2] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:16 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:18 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 1] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 2] &{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:0xc000026ea0 Data:<nil>} success, get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 #8
+2022/11/11 08:12:21 key 8 -> shard 6 :100 4603427682602932194 18
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 0] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:0xc0001985a0 Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:17 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:19 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:0xc0001985a0 Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:21 [100 2] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 1] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] &{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:0xc0001985a0 Data:<nil>} success, get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:21 #9
+2022/11/11 08:12:21 key 9 -> shard 7 :100 4603427682602932194 19
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:21 [100 0] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:18 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:20 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:21 [100 1] KVs: map[8:3w4GY]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:0xc0002744e0 Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:0xc0002744e0 Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:21 [100 2] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 [100 2] &{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:0xc0002744e0 Data:<nil>} success, get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:21 [ShardCtrler]: NewConfig &{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:21 #0
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 20
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:21 [100 0] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:19 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:21 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:0xc000274d20 Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:0xc000274d20 Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 2] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] &{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:0xc000274d20 Data:<nil>} success, get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 1] KVs: map[9:1ejUH]
+2022/11/11 08:12:21 key 0 -> shard 8 :100 4603427682602932194 21
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 1] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:20 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:22 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbp}}
+2022/11/11 08:12:21 [100 0] KVs: map[0:OnNbp]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:0xc000275200 Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:0xc000275200 Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:21 [100 2] &{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:0xc000275200 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #1
+2022/11/11 08:12:21 key 1 -> shard 9 :100 4603427682602932194 22
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:cXo12 Op:Append ClerkId:4603427682602932194 RequestId:21 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:23 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:0xc000242300 Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:0xc000242300 Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 2] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] &{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:0xc000242300 Data:<nil>} success, get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 key 1 -> shard 9 :100 4603427682602932194 23
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 0] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:22 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:24 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVs}}
+2022/11/11 08:12:21 [100 1] KVs: map[1:OPsVs]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:0xc000242960 Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:0xc000242960 Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:21 [100 2] &{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:0xc000242960 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #2
+2022/11/11 08:12:21 key 2 -> shard 0 :100 4603427682602932194 24
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:0xc000242fc0 Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:0xc000242fc0 Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:OOnc2 Op:Append ClerkId:4603427682602932194 RequestId:23 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:25 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 1] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:21 [100 2] &{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:0xc000242fc0 Data:<nil>} success, get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 key 2 -> shard 0 :100 4603427682602932194 25
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 0] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:0xc000243680 Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:0xc000243680 Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:24 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:26 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi}}
+2022/11/11 08:12:21 [100 1] KVs: map[2:M8RPi]
+2022/11/11 08:12:21 [100 2] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:21 [100 2] &{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:0xc000243680 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #3
+2022/11/11 08:12:21 key 3 -> shard 1 :100 4603427682602932194 26
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:0xc000275980 Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:4u0Tr Op:Append ClerkId:4603427682602932194 RequestId:25 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:27 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:0xc000275980 Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 2] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] &{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:0xc000275980 Data:<nil>} success, get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 key 3 -> shard 1 :100 4603427682602932194 27
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 0] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:0xc000243e00 Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:0xc000243e00 Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:21 [100 2] &{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:0xc000243e00 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:26 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:28 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MU}}
+2022/11/11 08:12:21 [100 1] KVs: map[3:IN3MU]
+2022/11/11 08:12:21 #4
+2022/11/11 08:12:21 key 4 -> shard 2 :100 4603427682602932194 28
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:hvB4A Op:Append ClerkId:4603427682602932194 RequestId:27 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:29 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:0xc0003a4360 Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:0xc0003a4360 Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 2] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] &{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:0xc0003a4360 Data:<nil>} success, get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 key 4 -> shard 2 :100 4603427682602932194 29
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 1] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:0xc0003221e0 Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:0xc0003221e0 Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:28 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:30 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8O}}
+2022/11/11 08:12:21 [100 0] KVs: map[4:lLy8O]
+2022/11/11 08:12:21 [100 2] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:21 [100 2] &{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:0xc0003221e0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #5
+2022/11/11 08:12:21 key 5 -> shard 3 :100 4603427682602932194 30
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:0xc0003a41e0 Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:0xc0003a41e0 Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 2] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] &{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:0xc0003a41e0 Data:<nil>} success, get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:jxLiN Op:Append ClerkId:4603427682602932194 RequestId:29 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:31 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:21 key 5 -> shard 3 :100 4603427682602932194 31
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 0] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:0xc0003a48a0 Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:0xc0003a48a0 Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:30 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:32 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYq}}
+2022/11/11 08:12:21 [100 1] KVs: map[5:nFQYq]
+2022/11/11 08:12:21 [100 2] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:21 [100 2] &{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:0xc0003a48a0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 #6
+2022/11/11 08:12:21 key 6 -> shard 4 :100 4603427682602932194 32
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:0xc000322720 Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:0xc000322720 Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 2] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 2] &{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:0xc000322720 Data:<nil>} success, get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:Lg_zL Op:Append ClerkId:4603427682602932194 RequestId:31 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:33 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:21 key 6 -> shard 4 :100 4603427682602932194 33
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 0] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:0xc000322d80 Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:0xc000322d80 Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:21 [100 2] &{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:0xc000322d80 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:32 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:34 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATz}}
+2022/11/11 08:12:21 [100 1] KVs: map[6:c8ATz]
+2022/11/11 08:12:21 #7
+2022/11/11 08:12:21 key 7 -> shard 5 :100 4603427682602932194 34
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 1] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:0xc0003233e0 Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:0xc0003233e0 Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:wmVna Op:Append ClerkId:4603427682602932194 RequestId:33 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:35 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 0] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:21 [100 2] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] &{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:0xc0003233e0 Data:<nil>} success, get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 key 7 -> shard 5 :100 4603427682602932194 35
+2022/11/11 08:12:21 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 0] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:34 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:36 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maK}}
+2022/11/11 08:12:21 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:0xc000198360 Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:21 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:0xc000198360 Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:21 [100 2] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:21 [100 1] KVs: map[7:E4maK]
+2022/11/11 08:12:21 [100 2] &{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:0xc000198360 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #8
+2022/11/11 08:12:22 key 8 -> shard 6 :100 4603427682602932194 36
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:JvMQr Op:Append ClerkId:4603427682602932194 RequestId:35 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:37 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:0xc000198b40 Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:0xc000198b40 Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:22 [100 2] KVs: map[8:3w4GY]
+2022/11/11 08:12:22 [100 2] &{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:0xc000198b40 Data:<nil>} success, get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:22 key 8 -> shard 6 :100 4603427682602932194 37
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:22 [100 1] KVs: map[8:3w4GY]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:0xc000199080 Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:36 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:38 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GY}}
+2022/11/11 08:12:22 [100 0] KVs: map[8:3w4GY]
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:0xc000199080 Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 [100 2] &{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:0xc000199080 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #9
+2022/11/11 08:12:22 key 9 -> shard 7 :100 4603427682602932194 38
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:0xc0003a55c0 Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:0xc0003a55c0 Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:22 [100 2] KVs: map[9:1ejUH]
+2022/11/11 08:12:22 [100 2] &{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:0xc0003a55c0 Data:<nil>} success, get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:n9Aho Op:Append ClerkId:4603427682602932194 RequestId:37 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:39 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 key 9 -> shard 7 :100 4603427682602932194 39
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:22 [100 0] KVs: map[9:1ejUH]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:38 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:40 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUH}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:0xc0003a5b00 Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:0xc0003a5b00 Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 2] &{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:0xc0003a5b00 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[9:1ejUH]
+2022/11/11 08:12:22 [ShardCtrler]: NewConfig &{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:22 [ShardCtrler]: NewConfig &{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:22 [ShardCtrler]: NewConfig &{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:22 #0
+2022/11/11 08:12:22 key 0 -> shard 8 :100 4603427682602932194 40
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:0xc000242480 Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:yloaa Op:Append ClerkId:4603427682602932194 RequestId:39 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:41 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:0xc000242480 Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbpcXo12}}
+2022/11/11 08:12:22 [100 2] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:22 [100 2] &{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:0xc000242480 Data:<nil>} success, get reply {&{Err:OK Value:OnNbpcXo12}}
+2022/11/11 08:12:22 key 0 -> shard 8 :100 4603427682602932194 41
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbpcXo12}}
+2022/11/11 08:12:22 [100 0] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:0xc000242b40 Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value: Op:Get ClerkId:4603427682602932194 RequestId:40 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:42 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OnNbpcXo12}}
+2022/11/11 08:12:22 [100 1] KVs: map[0:OnNbpcXo12]
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:0xc000242b40 Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[0:OnNbpcXo12De94m]
+2022/11/11 08:12:22 [100 2] &{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:0xc000242b40 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #1
+2022/11/11 08:12:22 key 1 -> shard 9 :100 4603427682602932194 42
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[0:OnNbpcXo12De94m]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:0 Value:De94m Op:Append ClerkId:4603427682602932194 RequestId:41 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:43 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:0xc000323d40 Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:0xc000323d40 Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVsOOnc2}}
+2022/11/11 08:12:22 [100 0] KVs: map[0:OnNbpcXo12De94m]
+2022/11/11 08:12:22 [100 2] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:22 [100 2] &{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:0xc000323d40 Data:<nil>} success, get reply {&{Err:OK Value:OPsVsOOnc2}}
+2022/11/11 08:12:22 key 1 -> shard 9 :100 4603427682602932194 43
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVsOOnc2}}
+2022/11/11 08:12:22 [100 0] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:0xc000026fc0 Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:0xc000026fc0 Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value: Op:Get ClerkId:4603427682602932194 RequestId:42 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:44 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:OPsVsOOnc2}}
+2022/11/11 08:12:22 [100 2] KVs: map[1:OPsVsOOnc2PTnIv]
+2022/11/11 08:12:22 [100 2] &{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:0xc000026fc0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[1:OPsVsOOnc2]
+2022/11/11 08:12:22 #2
+2022/11/11 08:12:22 key 2 -> shard 0 :100 4603427682602932194 44
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[1:OPsVsOOnc2PTnIv]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:1 Value:PTnIv Op:Append ClerkId:4603427682602932194 RequestId:43 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:45 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[1:OPsVsOOnc2PTnIv]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:0xc000198660 Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:0xc000198660 Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi4u0Tr}}
+2022/11/11 08:12:22 [100 2] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:22 [100 2] &{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:0xc000198660 Data:<nil>} success, get reply {&{Err:OK Value:M8RPi4u0Tr}}
+2022/11/11 08:12:22 key 2 -> shard 0 :100 4603427682602932194 45
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi4u0Tr}}
+2022/11/11 08:12:22 [100 0] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value: Op:Get ClerkId:4603427682602932194 RequestId:44 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:46 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:M8RPi4u0Tr}}
+2022/11/11 08:12:22 [100 1] KVs: map[2:M8RPi4u0Tr]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:0xc000198de0 Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:0xc000198de0 Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[2:M8RPi4u0TrxRy84]
+2022/11/11 08:12:22 [100 2] &{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:0xc000198de0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #3
+2022/11/11 08:12:22 key 3 -> shard 1 :100 4603427682602932194 46
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[2:M8RPi4u0TrxRy84]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:0xc000027800 Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:2 Value:xRy84 Op:Append ClerkId:4603427682602932194 RequestId:45 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:47 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[2:M8RPi4u0TrxRy84]
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:0xc000027800 Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MUhvB4A}}
+2022/11/11 08:12:22 [100 2] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:22 [100 2] &{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:0xc000027800 Data:<nil>} success, get reply {&{Err:OK Value:IN3MUhvB4A}}
+2022/11/11 08:12:22 key 3 -> shard 1 :100 4603427682602932194 47
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MUhvB4A}}
+2022/11/11 08:12:22 [100 0] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:0xc000027ce0 Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value: Op:Get ClerkId:4603427682602932194 RequestId:46 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:48 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:IN3MUhvB4A}}
+2022/11/11 08:12:22 [100 1] KVs: map[3:IN3MUhvB4A]
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:0xc000027ce0 Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[3:IN3MUhvB4AwCbWS]
+2022/11/11 08:12:22 [100 2] &{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:0xc000027ce0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #4
+2022/11/11 08:12:22 key 4 -> shard 2 :100 4603427682602932194 48
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[3:IN3MUhvB4AwCbWS]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:0xc000242660 Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:0xc000242660 Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8OjxLiN}}
+2022/11/11 08:12:22 [100 2] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:22 [100 2] &{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:0xc000242660 Data:<nil>} success, get reply {&{Err:OK Value:lLy8OjxLiN}}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:3 Value:wCbWS Op:Append ClerkId:4603427682602932194 RequestId:47 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:49 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[3:IN3MUhvB4AwCbWS]
+2022/11/11 08:12:22 key 4 -> shard 2 :100 4603427682602932194 49
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8OjxLiN}}
+2022/11/11 08:12:22 [100 0] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value: Op:Get ClerkId:4603427682602932194 RequestId:48 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:50 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:lLy8OjxLiN}}
+2022/11/11 08:12:22 [100 1] KVs: map[4:lLy8OjxLiN]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:0xc000242cc0 Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:0xc000242cc0 Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[4:lLy8OjxLiNowqOU]
+2022/11/11 08:12:22 [100 2] &{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:0xc000242cc0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #5
+2022/11/11 08:12:22 key 5 -> shard 3 :100 4603427682602932194 50
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[4:lLy8OjxLiNowqOU]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:4 Value:owqOU Op:Append ClerkId:4603427682602932194 RequestId:49 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:51 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[4:lLy8OjxLiNowqOU]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:0xc000243500 Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:0xc000243500 Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYqLg_zL}}
+2022/11/11 08:12:22 [100 2] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:22 [100 2] &{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:0xc000243500 Data:<nil>} success, get reply {&{Err:OK Value:nFQYqLg_zL}}
+2022/11/11 08:12:22 key 5 -> shard 3 :100 4603427682602932194 51
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYqLg_zL}}
+2022/11/11 08:12:22 [100 0] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:0 Shards:[0 0 0 0 0 0 0 0 0 0] Groups:map[]} NewConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]}}} CommandTerm:1 CommandIndex:1 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] apply config {Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value: Op:Get ClerkId:4603427682602932194 RequestId:50 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:52 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:nFQYqLg_zL}}
+2022/11/11 08:12:22 [100 1] KVs: map[5:nFQYqLg_zL]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:0xc0003a4300 Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:0xc0003a4300 Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[5:nFQYqLg_zLiCrcu]
+2022/11/11 08:12:22 [100 2] &{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:0xc0003a4300 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #6
+2022/11/11 08:12:22 key 6 -> shard 4 :100 4603427682602932194 52
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[5:nFQYqLg_zLiCrcu]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:0xc0003a4900 Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:0xc0003a4900 Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATzwmVna}}
+2022/11/11 08:12:22 [100 2] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:22 [100 2] &{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:0xc0003a4900 Data:<nil>} success, get reply {&{Err:OK Value:c8ATzwmVna}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:5 Value:iCrcu Op:Append ClerkId:4603427682602932194 RequestId:51 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:53 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[5:nFQYqLg_zLiCrcu]
+2022/11/11 08:12:22 key 6 -> shard 4 :100 4603427682602932194 53
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATzwmVna}}
+2022/11/11 08:12:22 [100 0] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value: Op:Get ClerkId:4603427682602932194 RequestId:52 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:54 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:c8ATzwmVna}}
+2022/11/11 08:12:22 [100 1] KVs: map[6:c8ATzwmVna]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:0xc000242360 Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:0xc000242360 Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[6:c8ATzwmVnatpzem]
+2022/11/11 08:12:22 [100 2] &{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:0xc000242360 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #7
+2022/11/11 08:12:22 key 7 -> shard 5 :100 4603427682602932194 54
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[6:c8ATzwmVnatpzem]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:6 Value:tpzem Op:Append ClerkId:4603427682602932194 RequestId:53 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:55 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:0xc000242ae0 Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:0xc000242ae0 Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maKJvMQr}}
+2022/11/11 08:12:22 [100 2] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:22 [100 2] &{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:0xc000242ae0 Data:<nil>} success, get reply {&{Err:OK Value:E4maKJvMQr}}
+2022/11/11 08:12:22 [100 1] KVs: map[6:c8ATzwmVnatpzem]
+2022/11/11 08:12:22 key 7 -> shard 5 :100 4603427682602932194 55
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maKJvMQr}}
+2022/11/11 08:12:22 [100 0] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value: Op:Get ClerkId:4603427682602932194 RequestId:54 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:56 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:E4maKJvMQr}}
+2022/11/11 08:12:22 [100 1] KVs: map[7:E4maKJvMQr]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:0xc000243380 Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:0xc000243380 Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[7:E4maKJvMQrMCVc4]
+2022/11/11 08:12:22 [100 2] &{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:0xc000243380 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #8
+2022/11/11 08:12:22 key 8 -> shard 6 :100 4603427682602932194 56
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[7:E4maKJvMQrMCVc4]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:0xc000243aa0 Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:0xc000243aa0 Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GYn9Aho}}
+2022/11/11 08:12:22 [100 2] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 [100 2] &{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:0xc000243aa0 Data:<nil>} success, get reply {&{Err:OK Value:3w4GYn9Aho}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:7 Value:MCVc4 Op:Append ClerkId:4603427682602932194 RequestId:55 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:57 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[7:E4maKJvMQrMCVc4]
+2022/11/11 08:12:22 key 8 -> shard 6 :100 4603427682602932194 57
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GYn9Aho}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:0xc000198180 Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:0xc000198180 Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[8:3w4GYn9AhoPPxtC]
+2022/11/11 08:12:22 [100 1] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value: Op:Get ClerkId:4603427682602932194 RequestId:56 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:58 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:3w4GYn9Aho}}
+2022/11/11 08:12:22 [100 0] KVs: map[8:3w4GYn9Aho]
+2022/11/11 08:12:22 [100 2] &{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:0xc000198180 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 #9
+2022/11/11 08:12:22 key 9 -> shard 7 :100 4603427682602932194 58
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[8:3w4GYn9AhoPPxtC]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:8 Value:PPxtC Op:Append ClerkId:4603427682602932194 RequestId:57 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:59 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[8:3w4GYn9AhoPPxtC]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:0xc000026de0 Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:0xc000026de0 Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUHyloaa}}
+2022/11/11 08:12:22 [100 2] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 2] &{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:0xc000026de0 Data:<nil>} success, get reply {&{Err:OK Value:1ejUHyloaa}}
+2022/11/11 08:12:22 key 9 -> shard 7 :100 4603427682602932194 59
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUHyloaa}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:0xc0000273e0 Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:0xc0000273e0 Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 2] KVs: map[9:1ejUHyloaaCYMpL]
+2022/11/11 08:12:22 [100 0] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value: Op:Get ClerkId:4603427682602932194 RequestId:58 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:60 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:1ejUHyloaa}}
+2022/11/11 08:12:22 [100 1] KVs: map[9:1ejUHyloaa]
+2022/11/11 08:12:22 [100 2] &{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:0xc0000273e0 Data:<nil>} success, get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [ShardCtrler]: NewConfig &{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:22 [ShardCtrler]: NewConfig &{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}
+2022/11/11 08:12:22 [101 2] send msg {LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 2] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [101 2] start pull shard
+2022/11/11 08:12:22 [101 2] pull shard 9 from 100 with args &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 6 from 100 with args &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 8 from 100 with args &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 5 from 100 with args &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 7 from 100 with args &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 6 from 100 and get reply &{Err:OK Shard:{KVs:map[8:3w4GYn9AhoPPxtC] Version:2}}
+2022/11/11 08:12:22 [101 2] pull shard 5 from 100 and get reply &{Err:OK Shard:{KVs:map[7:E4maKJvMQrMCVc4] Version:2}}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 8 from 100 and get reply &{Err:OK Shard:{KVs:map[0:OnNbpcXo12De94m] Version:2}}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 9 from 100 and get reply &{Err:OK Shard:{KVs:map[1:OPsVsOOnc2PTnIv] Version:2}}
+2022/11/11 08:12:22 [100 2] send msg {LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [101 2] pull shard 7 from 100 and get reply &{Err:OK Shard:{KVs:map[9:1ejUHyloaaCYMpL] Version:2}}
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:62 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [102 1] send msg {LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 1] KVs: map[9:1ejUHyloaaCYMpL]
+2022/11/11 08:12:22 [101 2] start pull shard
+2022/11/11 08:12:22 [101 2] pull shard 9 from 100 with args &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [102 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 1] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [101 2] pull shard 5 from 100 with args &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 6 from 100 with args &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 7 from 100 with args &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 8 from 100 with args &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[8:3w4GYn9AhoPPxtC] Version:2} Sid:6}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[7:E4maKJvMQrMCVc4] Version:2} Sid:5}} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[0:OnNbpcXo12De94m] Version:2} Sid:8}} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:5 Version:1}
+2022/11/11 08:12:22 [100 0] try to ApplyCommand{{CommandValid:true Command:{Key:9 Value:CYMpL Op:Append ClerkId:4603427682602932194 RequestId:59 Ch:<nil> Data:<nil>} CommandTerm:1 CommandIndex:61 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}} and Get reply {&{Err:OK Value:}}
+2022/11/11 08:12:22 [100 0] KVs: map[9:1ejUHyloaaCYMpL]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:62 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [101 2] pull shard 5 from 100 and get reply &{Err:OK Shard:{KVs:map[7:E4maKJvMQrMCVc4] Version:2}}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[1:OPsVsOOnc2PTnIv] Version:2} Sid:9}} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[9:1ejUHyloaaCYMpL] Version:2} Sid:7}} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 0] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [100 2] get request &{ShardId:9 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:7 Version:1}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:8 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 7 from 100 and get reply &{Err:OK Shard:{KVs:map[9:1ejUHyloaaCYMpL] Version:2}}
+2022/11/11 08:12:22 [101 2] pull shard 8 from 100 and get reply &{Err:OK Shard:{KVs:map[0:OnNbpcXo12De94m] Version:2}}
+2022/11/11 08:12:22 [100 0] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 9 from 100 and get reply &{Err:OK Shard:{KVs:map[1:OPsVsOOnc2PTnIv] Version:2}}
+2022/11/11 08:12:22 [100 1] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[8:3w4GYn9AhoPPxtC] Version:2} Sid:6}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[7:E4maKJvMQrMCVc4] Version:2} Sid:5}} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[0:OnNbpcXo12De94m] Version:2} Sid:8}} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[1:OPsVsOOnc2PTnIv] Version:2} Sid:9}} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[9:1ejUHyloaaCYMpL] Version:2} Sid:7}} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] get request &{ShardId:6 Version:1}
+2022/11/11 08:12:22 [101 2] pull shard 6 from 100 and get reply &{Err:OK Shard:{KVs:map[8:3w4GYn9AhoPPxtC] Version:2}}
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:62 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[8:3w4GYn9AhoPPxtC] Version:2} Sid:6}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[7:E4maKJvMQrMCVc4] Version:2} Sid:5}} CommandTerm:1 CommandIndex:4 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[0:OnNbpcXo12De94m] Version:2} Sid:8}} CommandTerm:1 CommandIndex:5 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[1:OPsVsOOnc2PTnIv] Version:2} Sid:9}} CommandTerm:1 CommandIndex:6 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:InsertShard ClerkId:2 RequestId:0 Ch:<nil> Data:{Shard:{KVs:map[9:1ejUHyloaaCYMpL] Version:2} Sid:7}} CommandTerm:1 CommandIndex:7 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:1 Shards:[100 100 100 100 100 100 100 100 100 100] Groups:map[100:[server-100-0 server-100-1 server-100-2]]} NewConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:2 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 2] apply config {Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [101 2] send msg {LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [101 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 2] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[7:E4maKJvMQrMCVc4] 3} {map[8:3w4GYn9AhoPPxtC] 3} {map[9:1ejUHyloaaCYMpL] 3} {map[0:OnNbpcXo12De94m] 3} {map[1:OPsVsOOnc2PTnIv] 3}]
+2022/11/11 08:12:22 [101 2] start pull shard
+2022/11/11 08:12:22 [101 2] pull shard 4 from 100 with args &{ShardId:4 Version:2}
+2022/11/11 08:12:22 [101 2] pull shard 2 from 100 with args &{ShardId:2 Version:2}
+2022/11/11 08:12:22 [101 2] pull shard 1 from 100 with args &{ShardId:1 Version:2}
+2022/11/11 08:12:22 [101 2] pull shard 3 from 100 with args &{ShardId:3 Version:2}
+2022/11/11 08:12:22 [101 2] pull shard 0 from 100 with args &{ShardId:0 Version:2}
+2022/11/11 08:12:22 [100 2] send msg {LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [100 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:63 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 2] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [100 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:63 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 0] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [102 1] send msg {LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}
+2022/11/11 08:12:22 [102 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 1] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [102 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 0] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:22 [100 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:63 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [100 1] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[2:M8RPi4u0TrxRy84] 2} {map[3:IN3MUhvB4AwCbWS] 2} {map[4:lLy8OjxLiNowqOU] 2} {map[5:nFQYqLg_zLiCrcu] 2} {map[6:c8ATzwmVnatpzem] 2} {map[7:E4maKJvMQrMCVc4] 1} {map[8:3w4GYn9AhoPPxtC] 1} {map[9:1ejUHyloaaCYMpL] 1} {map[0:OnNbpcXo12De94m] 1} {map[1:OPsVsOOnc2PTnIv] 1}]
+2022/11/11 08:12:22 [101 1] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 1] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[7:E4maKJvMQrMCVc4] 3} {map[8:3w4GYn9AhoPPxtC] 3} {map[9:1ejUHyloaaCYMpL] 3} {map[0:OnNbpcXo12De94m] 3} {map[1:OPsVsOOnc2PTnIv] 3}]
+2022/11/11 08:12:22 [101 0] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:8 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [101 0] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[7:E4maKJvMQrMCVc4] 3} {map[8:3w4GYn9AhoPPxtC] 3} {map[9:1ejUHyloaaCYMpL] 3} {map[0:OnNbpcXo12De94m] 3} {map[1:OPsVsOOnc2PTnIv] 3}]
+2022/11/11 08:12:22 [102 2] Get Command ---- {CommandValid:true Command:{Key: Value: Op:ApplyConfig ClerkId:0 RequestId:0 Ch:<nil> Data:{LastConfig:{Num:2 Shards:[100 100 100 100 100 101 101 101 101 101] Groups:map[100:[server-100-0 server-100-1 server-100-2] 101:[server-101-0 server-101-1 server-101-2]]} NewConfig:{Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]}}} CommandTerm:1 CommandIndex:3 SnapshotValid:false Snapshot:[] SnapshotTerm:0 SnapshotIndex:0}
+2022/11/11 08:12:22 [102 2] apply config {Num:3 Shards:[101 101 101 101 101 101 101 101 101 101] Groups:map[101:[server-101-0 server-101-1 server-101-2]]} and update Shards -> [{map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0} {map[] 0}]
+2022/11/11 08:12:23 STAGE 4 START AND 0 IS SHUTDOWN
+2022/11/11 08:12:23 #0
+2022/11/11 08:12:23 key 0 -> shard 8 :100 4603427682602932194 60
+signal: interrupt
+FAIL	6.824/shardkv	1.631s

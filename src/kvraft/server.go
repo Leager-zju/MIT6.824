@@ -7,9 +7,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"6.824/src/labgob"
-	"6.824/src/labrpc"
-	"6.824/src/raft"
+	"6.824/labgob"
+	"6.824/labrpc"
+	"6.824/raft"
 )
 
 const Debug = true
@@ -17,11 +17,6 @@ const Debug = true
 // const Debug = false
 
 const ExecutionTimeOut = 500 * time.Millisecond
-
-type RequestInfo struct {
-	RequestID uint32
-	Err       Err
-}
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
@@ -59,6 +54,11 @@ func (kv *KVServer) NeedSnapshot() bool {
 	return kv.maxraftstate != -1 && kv.persister.RaftStateSize() >= kv.maxraftstate
 }
 
+type RequestInfo struct {
+	RequestID uint32
+	Err       Err
+}
+
 type KVServer struct {
 	mu        sync.RWMutex
 	me        int
@@ -76,8 +76,8 @@ type KVServer struct {
 }
 
 func (kv *KVServer) isDuplicated(RequestID, ClerkID uint32) bool {
-	replyContext, ok := kv.lastRequestInfo[ClerkID]
-	return ok && replyContext.RequestID >= RequestID
+	lastRequestInfo, ok := kv.lastRequestInfo[ClerkID]
+	return ok && lastRequestInfo.RequestID >= RequestID
 }
 
 func (kv *KVServer) HandleRequest(args *Args, reply *Reply) {

@@ -55,7 +55,7 @@ func check(t *testing.T, groups []int, ck *Clerk) {
 }
 
 func check_same_config(t *testing.T, c1 Config, c2 Config) {
-	DPrintf("check_same_config: c1 %+v 		and c2 %+v", c1, c2)
+	// DPrintf("check_same_config: c1 %+v 		and c2 %+v", c1, c2)
 	if c1.Num != c2.Num {
 		t.Fatalf("Num wrong")
 	}
@@ -128,6 +128,7 @@ func TestBasic(t *testing.T) {
 	for s := 0; s < nservers; s++ {
 		log.Printf("	#%d", s)
 		cfg.ShutdownServer(s)
+
 		for i := 0; i < len(cfa); i++ {
 			c := ck.Query(cfa[i].Num)
 			check_same_config(t, c, cfa[i])

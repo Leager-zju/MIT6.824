@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"6.824/src/labgob"
-	"6.824/src/labrpc"
+	"6.824/labgob"
+	"6.824/labrpc"
 )
 
 // Debugging
@@ -54,9 +54,7 @@ func min(a, b int) int {
 	return b
 }
 
-//
 // instead, we suggest that you simply have it return true.
-//
 func (rf *Raft) CondInstallSnapshot(lastIncludedTerm int, lastIncludedIndex int, snapshot []byte) bool {
 	return true
 }
@@ -202,13 +200,14 @@ func (rf *Raft) ResetTimer(isleader bool) {
 	}
 }
 
-//
 // Upon receiving a conflict response, the leader should first search its log for conflictTerm.
 // If it finds an entry in its log with that term:
-// 		it should set nextIndex to be the one beyond the index of the last entry in that term in its log.
-// If it does not find an entry with that term:
-// 		it should set nextIndex = conflictIndex.
 //
+//	it should set nextIndex to be the one beyond the index of the last entry in that term in its log.
+//
+// If it does not find an entry with that term:
+//
+//	it should set nextIndex = conflictIndex.
 func (rf *Raft) FindNextIndex(ConflictIndex, ConflictTerm int) (next int) {
 	defer DPrintf("[%d %d %v] Find nextindex = %d", rf.me, rf.CurrentTerm, rf.raftState, next)
 	BaseIndex := rf.GetBaseLog().Index
@@ -238,11 +237,10 @@ func (rf *Raft) FindNextIndex(ConflictIndex, ConflictTerm int) (next int) {
 	return
 }
 
-//
 // If there exists an N such that N > commitIndex,
 // a majority of matchIndex[i] ≥ N, and log[N].term == currentTerm:
-// 		set commitIndex = N
 //
+//	set commitIndex = N
 func (rf *Raft) FindN() {
 	// locked
 	matchIndexSet := make([]int, 0)
@@ -363,7 +361,7 @@ func (rf *Raft) Applier() {
 		BaseIndex := rf.GetBaseLog().Index
 		Entries := make([]LogEntry, rf.commitIndex-rf.lastApplied)
 		copy(Entries, rf.Entry[rf.lastApplied+1-BaseIndex:rf.commitIndex+1-BaseIndex])
-		DPrintf("[%d %d %v] apply len(entry): %d baseindex: %d lastapplied: %d commit: %d", rf.me, rf.CurrentTerm, rf.raftState, len(rf.Entry), BaseIndex, rf.lastApplied, rf.commitIndex)
+		DPrintf("[%d %d %v] apply Entry: %v		 len(entry): %d baseindex: %d lastapplied: %d commit: %d", rf.me, rf.CurrentTerm, rf.raftState, Entries, len(rf.Entry), BaseIndex, rf.lastApplied, rf.commitIndex)
 		rf.mu.Unlock()
 
 		for _, Entry := range Entries {
@@ -381,9 +379,7 @@ func (rf *Raft) Applier() {
 	}
 }
 
-//
 // PART: Election
-//
 func (rf *Raft) StartElection() {
 
 	voteCnt := 1
@@ -459,9 +455,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	rf.ResetTimer(false)
 }
 
-//
 // PART: Heartbeat
-//
 func (rf *Raft) StartHeartbeat(urgent bool) {
 	for peer := range rf.peers {
 		if peer != rf.me {

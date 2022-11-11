@@ -20,11 +20,10 @@ package shardctrler
 // The number of shards.
 const NShards = 10
 
-// A configuration -- an assignment of shards to groups.
 // Please don't change this.
 type Config struct {
 	Num    int              // config number
-	Shards [NShards]int     // shard -> gid
+	Shards [NShards]int     // shardid -> gid
 	Groups map[int][]string // gid -> servers[]
 }
 
@@ -38,27 +37,14 @@ type Err string
 
 type Args struct {
 	Op        int
-	ClerkID   int64
-	RequestID int
+	ClerkId   int64
+	RequestId int
 	Servers   map[int][]string // new GID -> servers mappings
 	GIDs      []int
 	Shard     int
 	Num       int // desired config number
-	ch        chan *Reply
+	Ch        chan *Reply
 }
-
-// type LeaveArgs struct {
-// 	GIDs      []int
-// }
-
-// type MoveArgs struct {
-// 	Shard     int
-// 	GID       int
-// }
-
-// type QueryArgs struct {
-// 	Num       int // desired config number
-// }
 
 type Reply struct {
 	Err    Err

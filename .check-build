@@ -4,33 +4,33 @@ set -eu
 
 REFERENCE_FILES=(
     # lab 1
-    src/mrapps/crash.go
-    src/mrapps/indexer.go
-    src/mrapps/mtiming.go
-    src/mrapps/nocrash.go
-    src/mrapps/rtiming.go
-    src/mrapps/wc.go
-    src/main/mrsequential.go
-    src/main/mrcoordinator.go
-    src/main/mrworker.go
+    6.824/src/mrapps/crash.go
+    6.824/src/mrapps/indexer.go
+    6.824/src/mrapps/mtiming.go
+    6.824/src/mrapps/nocrash.go
+    6.824/src/mrapps/rtiming.go
+    6.824/src/mrapps/wc.go
+    6.824/src/main/mrsequential.go
+    6.824/src/main/mrcoordinator.go
+    6.824/src/main/mrworker.go
 
     # lab 2
-    src/raft/persister.go
-    src/raft/test_test.go
-    src/raft/config.go
-    src/labrpc/labrpc.go
+    6.824/src/raft/persister.go
+    6.824/src/raft/test_test.go
+    6.824/src/raft/config.go
+    6.824/src/labrpc/labrpc.go
 
     # lab 3
-    src/kvraft/test_test.go
-    src/kvraft/config.go
+    6.824/src/kvraft/test_test.go
+    6.824/src/kvraft/config.go
 
     # lab 4a
-    src/shardctrler/test_test.go
-    src/shardctrler/config.go
+    6.824/src/shardctrler/test_test.go
+    6.824/src/shardctrler/config.go
 
     # lab 4b
-    src/shardkv/test_test.go
-    src/shardkv/config.go
+    6.824/src/shardkv/test_test.go
+    6.824/src/shardkv/config.go
 )
 
 main() {
@@ -42,8 +42,8 @@ main() {
 
     # copy existing directory
     tmpdir="$(mktemp -d)"
-    find src -type s -delete # cp can't copy sockets
-    cp -r src "$tmpdir"
+    find 6.824/src -type s -delete # cp can't copy sockets
+    cp -r 6.824/src "$tmpdir"
     orig="$PWD"
     cd "$tmpdir"
 
@@ -67,7 +67,7 @@ main() {
 }
 
 check_lab1() {
-    check_cmd cd src/mrapps
+    check_cmd cd 6.824/src/mrapps
     check_cmd go build -buildmode=plugin wc.go
     check_cmd go build -buildmode=plugin indexer.go
     check_cmd go build -buildmode=plugin mtiming.go
@@ -81,22 +81,22 @@ check_lab1() {
 }
 
 check_lab2() {
-    check_cmd cd src/raft
+    check_cmd cd 6.824/src/raft
     check_cmd go test -c
 }
 
 check_lab3() {
-    check_cmd cd src/kvraft
+    check_cmd cd 6.824/src/kvraft
     check_cmd go test -c
 }
 
 check_lab4a() {
-    check_cmd cd src/shardctrler
+    check_cmd cd 6.824/src/shardctrler
     check_cmd go test -c
 }
 
 check_lab4b() {
-    check_cmd cd src/shardkv
+    check_cmd cd 6.824/src/shardkv
     check_cmd go test -c
     # also check other labs/parts
     cd "$tmpdir"

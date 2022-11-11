@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"sync"
 
-	"6.824/src/labrpc"
+	"6.824/labrpc"
 )
 
 type Clerk struct {

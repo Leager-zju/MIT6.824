@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"6.824/src/pbservice"
+	"6.824/pbservice"
 )
 
 func main() {
