@@ -22,16 +22,15 @@ const ExecutionTimeOut = 500 * time.Millisecond
 
 const NewConfigQueryTimeOut = 100 * time.Millisecond
 
+const NewShardPullerTimeOut = 100 * time.Millisecond
+
+const NewGarbageCollectorTimeOut = 100 * time.Millisecond
+
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
 		log.Printf(format, a...)
 	}
 	return
-}
-
-type RequestInfo struct {
-	RequestID int
-	Err       Err
 }
 
 type ShardKV struct {
@@ -49,20 +48,14 @@ type ShardKV struct {
 	lastapplied  int
 
 	Shards          [shardctrler.NShards]Shard
-	lastRequestInfo map[int64]*RequestInfo
+	lastRequestInfo map[int64]RequestInfo
 
-	// 对这俩的修改要加锁(?)
 	lastConfig    shardctrler.Config
 	currentConfig shardctrler.Config // currentConfig.Num 其实就相当于 raft 层的 Term
 
-	CP_Cond *sync.Cond
-	SP_Cond *sync.Cond
-	GC_Cond *sync.Cond
-
 	dead int32
 
-	RequestId  int
-	CtrlLeader int
+	RequestId int
 }
 
 func (kv *ShardKV) MakeSnapshot() []byte {
@@ -87,21 +80,53 @@ func (kv *ShardKV) ApplySnapshot(data []byte) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	if d.Decode(&kv.Shards) != nil || d.Decode(&kv.lastRequestInfo) != nil || d.Decode(&kv.lastapplied) != nil || d.Decode(&kv.lastConfig) != nil || d.Decode(&kv.currentConfig) != nil {
+	var shards [shardctrler.NShards]Shard
+	if d.Decode(&shards) != nil || d.Decode(&kv.lastRequestInfo) != nil || d.Decode(&kv.lastapplied) != nil || d.Decode(&kv.lastConfig) != nil || d.Decode(&kv.currentConfig) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
+	}
+	for sid, shard := range shards {
+		for k, v := range shard.KVs {
+			kv.Shards[sid].KVs[k] = v
+		}
+		kv.Shards[sid].ShardStatus = shard.ShardStatus
 	}
 }
 
-func (kv *ShardKV) NeedSnapshot() bool { // raftstate 是否超过阈值，需要执行快照
+// raftstate 是否超过阈值，需要执行快照
+func (kv *ShardKV) NeedSnapshot() bool {
 	return kv.maxraftstate != -1 && kv.persister.RaftStateSize() >= kv.maxraftstate
 }
 
-func (kv *ShardKV) isDuplicated(RequestID int, ClerkID int64) bool { // 当前命令是否已执行
+// 当前命令是否已执行
+func (kv *ShardKV) isDuplicated(RequestID int, ClerkID int64) bool {
 	lastRequestInfo, ok := kv.lastRequestInfo[ClerkID]
 	return ok && lastRequestInfo.RequestID >= RequestID
 }
 
-func (kv *ShardKV) HandleRequest(args *Args, reply *Reply) {
+// 当前配置分配给 kv 该分片
+func (kv *ShardKV) OwnShard(shardId int) bool {
+	// locked
+	return kv.currentConfig.Shards[shardId] == kv.gid
+}
+
+// 分片数据是否能被客户端访问
+func (kv *ShardKV) ReadyForServer(shardId int) bool {
+	// locked
+	return kv.OwnShard(shardId) && (kv.Shards[shardId].ShardStatus == Ready || kv.Shards[shardId].ShardStatus == ReadyButNeedSendGC)
+}
+
+// 是否满足拉取 config 条件
+func (kv *ShardKV) ReadyForConfigPuller(shardId int) bool {
+	// locked
+	return kv.Shards[shardId].ShardStatus == Ready
+}
+
+func (kv *ShardKV) ReadyButNeedSendGC(shardId int) bool {
+	// locked
+	return kv.Shards[shardId].ShardStatus == ReadyButNeedSendGC
+}
+
+func (kv *ShardKV) HandleRequest(args *OperationCommand, reply *Reply) {
 	kv.mu.Lock()
 	if args.Op != "Get" && kv.isDuplicated(args.RequestId, args.ClerkId) {
 		DPrintf("args %+v duplicated", args)
@@ -139,16 +164,15 @@ func (kv *ShardKV) Applier() {
 			if msg.CommandIndex > kv.lastapplied {
 				DPrintf("[%d %d] Get Command ---- %+v", kv.gid, kv.me, msg)
 
-				command := msg.Command.(Args)
-
-				switch command.Op {
-				case "ApplyConfig":
-					kv.ApplyConfig(command.Data.(ConfigInfo))
-				case "InsertShard":
-					kv.InsertShard(command.Data.(ShardInfo))
-				// case "DeleteShard":
-				default:
+				switch msg.Command.(type) {
+				case OperationCommand:
 					kv.ApplyCommand(msg)
+				case ConfigCommand:
+					kv.ApplyUpdateConfigCommand(msg)
+				case ShardCommand:
+					kv.ApplyShardCommand(msg)
+				default:
+					panic("Undefined Command Type!")
 				}
 
 				kv.lastapplied = msg.CommandIndex
@@ -166,13 +190,14 @@ func (kv *ShardKV) Applier() {
 }
 
 func (kv *ShardKV) ApplyCommand(msg raft.ApplyMsg) {
-	command := msg.Command.(Args)
+	// locked
+	command := msg.Command.(OperationCommand)
 	ch := command.Ch
 	reply := new(Reply)
 
 	shardId := key2shard(command.Key)
 
-	if !kv.OwnShardAndValid(shardId) {
+	if !kv.ReadyForServer(shardId) {
 		reply.Err = ErrWrongGroup
 	} else if command.Op == "Get" {
 		val, ok := kv.Shards[shardId].KVs[command.Key]
@@ -184,6 +209,7 @@ func (kv *ShardKV) ApplyCommand(msg raft.ApplyMsg) {
 	} else if kv.isDuplicated(command.RequestId, command.ClerkId) {
 		reply.Err = kv.lastRequestInfo[command.ClerkId].Err
 	} else {
+
 		if command.Op == "Put" {
 			kv.Shards[shardId].KVs[command.Key] = command.Value
 			reply.Err = OK
@@ -200,22 +226,18 @@ func (kv *ShardKV) ApplyCommand(msg raft.ApplyMsg) {
 			log.Fatalf("command.op error!")
 		}
 
-		kv.lastRequestInfo[command.ClerkId] = &RequestInfo{
+		kv.lastRequestInfo[command.ClerkId] = RequestInfo{
 			RequestID: command.RequestId,
 			Err:       reply.Err,
 		}
 	}
 
-	DPrintf("[%d %d] try to ApplyCommand{%+v} and Get reply {%+v}", kv.gid, kv.me, msg, reply)
-	DPrintf("[%d %d] KVs: %+v", kv.gid, kv.me, kv.Shards[shardId].KVs)
-
+	DPrintf("[%d %d] applyCommand %+v and reply %+v", kv.gid, kv.me, command, reply)
 	if kv.rf.GetRaftState() == raft.Leader && kv.rf.GetCurrentTerm() == msg.CommandTerm {
-		go func(reply_ *Reply) { ch <- reply_ }(reply)
+		go func(reply_ *Reply) {
+			ch <- reply_
+		}(reply)
 	}
-}
-
-func (kv *ShardKV) GarbageCollector() {
-	// TODO
 }
 
 func (kv *ShardKV) Kill() {
@@ -238,9 +260,9 @@ func (kv *ShardKV) killed() bool {
 // look at client.go for examples of how to use ctrlers[]
 // and make_end() to send RPCs to the group owning a specific shard.
 func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister, maxraftstate int, gid int, ctrlers []*labrpc.ClientEnd, make_end func(string) *labrpc.ClientEnd) *ShardKV {
-	labgob.Register(Args{})
-	labgob.Register(ConfigInfo{})
-	labgob.Register(ShardInfo{})
+	labgob.Register(OperationCommand{})
+	labgob.Register(ConfigCommand{})
+	labgob.Register(ShardCommand{})
 
 	kv := &ShardKV{
 		me:              me,
@@ -251,24 +273,19 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 		persister:       persister,
 		maxraftstate:    maxraftstate,
 		lastapplied:     0,
-		lastRequestInfo: make(map[int64]*RequestInfo),
+		lastRequestInfo: make(map[int64]RequestInfo),
 		lastConfig:      shardctrler.Config{Num: 0},
 		currentConfig:   shardctrler.Config{Num: 0},
 		dead:            0,
 		RequestId:       0,
-		CtrlLeader:      0,
 	}
 	kv.applyCh = make(chan raft.ApplyMsg)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
-	kv.ApplySnapshot(kv.persister.ReadSnapshot())
 
 	for i := range kv.Shards {
 		kv.Shards[i].KVs = make(map[string]string)
 	}
-
-	kv.CP_Cond = sync.NewCond(&sync.Mutex{})
-	kv.SP_Cond = sync.NewCond(&sync.Mutex{})
-	kv.GC_Cond = sync.NewCond(&sync.Mutex{})
+	kv.ApplySnapshot(kv.persister.ReadSnapshot())
 
 	go kv.Applier()
 	go kv.ConfigPuller()

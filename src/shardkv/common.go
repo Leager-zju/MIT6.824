@@ -2,14 +2,13 @@ package shardkv
 
 import "6.824/shardctrler"
 
-//
 // Sharded key/value server.
 // Lots of replica groups, each running Raft.
 // Shardctrler decides which group serves each shard.
 // Shardctrler may change shard assignment from time to time.
 //
 // You will have to modify these definitions.
-//
+type Err string
 
 const (
 	OK             = "OK"
@@ -17,25 +16,39 @@ const (
 	ErrWrongGroup  = "ErrWrongGroup"
 	ErrWrongLeader = "ErrWrongLeader"
 	ErrDuplicated  = "ErrDuplicated"
-	ErrScale       = "ErrScale"
+	ErrNotReady    = "ErrNotReady"
+	ErrOldRequest  = "ErrOldRequest"
 )
 
-type Err string
+type status int
+
+const (
+	Ready              status = iota // 一切就绪
+	ReadyButNeedSendGC               // 就绪，但需要通知其他 group 进行 GC
+
+	NeedPull   // 表明该分片等待从其他 group 处拉取
+	NeedBePull // 表明该分片等待被其他 group 拉取
+	NeedBeGC   // 表明该分片刚被其他 group 拉取，等待 gc 通知
+)
 
 type Shard struct {
-	KVs     map[string]string
-	Version int
+	KVs         map[string]string
+	ShardStatus status
 }
 
-type Args struct {
+type RequestInfo struct {
+	RequestID int
+	Err       Err
+}
+
+// cmd
+type OperationCommand struct {
+	Op        string
 	Key       string
 	Value     string
-	Op        string
 	ClerkId   int64
 	RequestId int
 	Ch        chan *Reply
-
-	Data interface{}
 }
 
 type Reply struct {
@@ -43,22 +56,28 @@ type Reply struct {
 	Value string
 }
 
-type ShardExchangeArgs struct {
-	ShardId int
-	Version int
+type ShardCommand struct {
+	Op              string
+	Shard           *Shard
+	Sid             int
+	LastRequestInfo map[int64]RequestInfo
 }
 
-type ShardExchangeReply struct {
-	Err   Err
-	Shard Shard
-}
-
-type ConfigInfo struct {
+type ConfigCommand struct {
 	LastConfig shardctrler.Config
 	NewConfig  shardctrler.Config
 }
 
-type ShardInfo struct {
-	Shard Shard
-	Sid   int
+// rpc
+type RPCArgs struct {
+	Op        string
+	ShardId   int
+	ConfigNum int
+}
+
+type RPCReply struct {
+	Err             Err
+	Shard           Shard
+	ConfigNum       int
+	LastRequestInfo map[int64]RequestInfo
 }

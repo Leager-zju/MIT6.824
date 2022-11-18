@@ -42,6 +42,8 @@ type Clerk struct {
 	make_end  func(string) *labrpc.ClientEnd
 	ClerkId   int64
 	RequestId int
+
+	volatileLeader map[int]int // gid -> leader
 }
 
 // the tester calls MakeClerk.
@@ -53,55 +55,71 @@ type Clerk struct {
 // send RPCs.
 func MakeClerk(ctrlers []*labrpc.ClientEnd, make_end func(string) *labrpc.ClientEnd) *Clerk {
 	return &Clerk{
-		sm:        shardctrler.MakeClerk(ctrlers),
-		make_end:  make_end,
-		ClerkId:   nrand(),
-		RequestId: 0,
+		sm:             shardctrler.MakeClerk(ctrlers),
+		make_end:       make_end,
+		ClerkId:        nrand(),
+		RequestId:      0,
+		volatileLeader: make(map[int]int),
 	}
 }
 
-func (ck *Clerk) SendRequest(args *Args) string {
-	args.ClerkId, args.RequestId = ck.ClerkId, ck.RequestId
+func (ck *Clerk) SendRequest(Command *OperationCommand) string {
+	Command.ClerkId, Command.RequestId = ck.ClerkId, ck.RequestId
 
 	for {
-		shard := key2shard(args.Key)
+		shard := key2shard(Command.Key)
 		gid := ck.config.Shards[shard]
-		DPrintf("key %s -> shard %d :%d %d %d", args.Key, shard, gid, args.ClerkId, args.RequestId)
-		if servers, ok := ck.config.Groups[gid]; ok {
-			for si := 0; si < len(servers); si++ {
+
+		if servers, ok := ck.config.Groups[gid]; ok { // 若 gid 在当前 config 中
+			if _, ok := ck.volatileLeader[gid]; !ok {
+				ck.volatileLeader[gid] = 0
+			}
+
+			guard := ck.volatileLeader[gid]
+			leader := guard
+
+			for {
 				reply := new(Reply)
-				srv := ck.make_end(servers[si])
-				ok := srv.Call("ShardKV.HandleRequest", args, reply)
-				if ok && (reply.Err == OK || reply.Err == ErrNoKey) {
+				srv := ck.make_end(servers[leader])
+				ok := srv.Call("ShardKV.HandleRequest", Command, reply)
+				DPrintf("[client] %s %s, %s -> %d send to %s and get reply %+v", Command.Op, Command.Key, Command.Value, shard, servers[leader], reply)
+				if ok && (reply.Err == OK || reply.Err == ErrNoKey) { // OK
+					ck.volatileLeader[gid] = leader
 					ck.RequestId++
 					return reply.Value
-				}
-				if ok && (reply.Err == ErrWrongGroup) {
+				} else if ok && reply.Err == ErrWrongGroup { // arrive but WrongGroup
 					break
+				} else { // not arrive / arrive but WrongLeader
+					leader = (leader + 1) % len(ck.config.Groups[gid])
+					if leader == guard { // all servers failed
+						break
+					}
+					continue
 				}
 			}
 		}
+
 		time.Sleep(100 * time.Millisecond)
 		ck.config = ck.sm.Query(-1)
 	}
 }
 
 func (ck *Clerk) Get(key string) string {
-	return ck.SendRequest(&Args{
+	return ck.SendRequest(&OperationCommand{
 		Key: key,
 		Op:  "Get",
 	})
 }
 
 func (ck *Clerk) Put(key string, value string) {
-	ck.SendRequest(&Args{
+	ck.SendRequest(&OperationCommand{
 		Key:   key,
 		Value: value,
 		Op:    "Put",
 	})
 }
 func (ck *Clerk) Append(key string, value string) {
-	ck.SendRequest(&Args{
+	ck.SendRequest(&OperationCommand{
 		Key:   key,
 		Value: value,
 		Op:    "Append",
