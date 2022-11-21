@@ -36,15 +36,14 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 }
 
 type ShardKV struct {
-	mu        sync.RWMutex
-	me        int
-	mck       *shardctrler.Clerk
-	rf        *raft.Raft
-	applyCh   chan raft.ApplyMsg
-	make_end  func(string) *labrpc.ClientEnd
-	gid       int
-	ctrlers   []*labrpc.ClientEnd
-	persister *raft.Persister
+	mu       sync.RWMutex
+	me       int
+	mck      *shardctrler.Clerk
+	rf       *raft.Raft
+	applyCh  chan raft.ApplyMsg
+	make_end func(string) *labrpc.ClientEnd
+	gid      int
+	ctrlers  []*labrpc.ClientEnd
 
 	maxraftstate int // snapshot if log grows this big
 	lastapplied  int
@@ -53,12 +52,12 @@ type ShardKV struct {
 	lastRequestInfo map[int64]*RequestInfo
 
 	lastConfig    shardctrler.Config
-	currentConfig shardctrler.Config // currentConfig.Num 其实就相当于 raft 层的 Term
+	currentConfig shardctrler.Config
 
 	dead int32
 }
 
-func (kv *ShardKV) MakeSnapshot() []byte {
+func (kv *ShardKV) MakeSnapshot(index int) {
 	w := new(bytes.Buffer)
 	e := labgob.NewEncoder(w)
 	e.Encode(kv.Shards)
@@ -67,19 +66,17 @@ func (kv *ShardKV) MakeSnapshot() []byte {
 	e.Encode(kv.lastConfig)
 	e.Encode(kv.currentConfig)
 	data := w.Bytes()
-	return data
+	DPrintf("[%d %d] Make Snapshot, Shard: %+v", kv.gid, kv.me, kv.Shards)
+	kv.rf.Snapshot(index, data)
 }
 
-func (kv *ShardKV) ApplySnapshot(data []byte) {
-	if data == nil || len(data) < 1 { // bootstrap without any state?
+func (kv *ShardKV) ApplySnapshot(index, term int, data []byte) {
+	if data == nil || len(data) < 1 || (index != -1 && index <= kv.lastapplied) {
 		return
 	}
+
 	r := bytes.NewBuffer(data)
 	d := labgob.NewDecoder(r)
-
-	kv.mu.Lock()
-	defer kv.mu.Unlock()
-
 	var shards [shardctrler.NShards]Shard
 	if d.Decode(&shards) != nil || d.Decode(&kv.lastRequestInfo) != nil || d.Decode(&kv.lastapplied) != nil || d.Decode(&kv.lastConfig) != nil || d.Decode(&kv.currentConfig) != nil {
 		log.Fatalf("ApplySnapshot Decode Error\n")
@@ -90,11 +87,12 @@ func (kv *ShardKV) ApplySnapshot(data []byte) {
 		}
 		kv.Shards[sid].ShardStatus = shard.ShardStatus
 	}
+	DPrintf("[%d %d] Apply Snapshot (%d, %d) Shards %+v", kv.gid, kv.me, index, term, kv.Shards)
 }
 
 // raftstate 是否超过阈值，需要执行快照
 func (kv *ShardKV) NeedSnapshot() bool {
-	return kv.maxraftstate != -1 && kv.persister.RaftStateSize() >= kv.maxraftstate
+	return kv.maxraftstate != -1 && kv.rf.GetRaftStateSize() >= kv.maxraftstate
 }
 
 // 当前命令是否已执行
@@ -109,6 +107,7 @@ func (kv *ShardKV) OwnShard(shardId int) bool {
 	return kv.currentConfig.Shards[shardId] == kv.gid
 }
 
+// 是否需要向其它 group 拉取
 func (kv *ShardKV) NeedPull(shardId int) bool {
 	// locked
 	return kv.OwnShard(shardId) && kv.Shards[shardId].ShardStatus == NeedPull
@@ -162,34 +161,38 @@ func (kv *ShardKV) HandleRequest(args *OperationCommand, reply *Reply) {
 }
 
 func (kv *ShardKV) Applier() {
-	for msg := range kv.applyCh {
-		if msg.CommandValid {
-			kv.mu.Lock()
-			if msg.CommandIndex > kv.lastapplied {
-				DPrintf("[%d %d] Get Command %+v", kv.gid, kv.me, msg.Command)
+	// goroutine
+	for !kv.killed() {
+		for msg := range kv.applyCh {
+			if msg.CommandValid {
+				kv.mu.Lock()
+				if msg.CommandIndex > kv.lastapplied {
+					kv.lastapplied = msg.CommandIndex
+					DPrintf("[%d %d] Get Command %+v", kv.gid, kv.me, msg.Command)
 
-				switch msg.Command.(type) {
-				case OperationCommand:
-					kv.ApplyCommand(msg)
-				case ConfigCommand:
-					kv.ApplyUpdateConfigCommand(msg)
-				case ShardCommand:
-					kv.ApplyShardCommand(msg)
-				case EmptyCommand:
-					kv.ApplyEmptyCommand(msg)
-				default:
-					panic("Undefined Command Type!")
-				}
+					switch msg.Command.(type) {
+					case OperationCommand:
+						kv.ApplyCommand(msg)
+					case ConfigCommand:
+						kv.ApplyUpdateConfigCommand(msg)
+					case ShardCommand:
+						kv.ApplyShardCommand(msg)
+					case EmptyCommand:
+						kv.ApplyEmptyCommand()
+					default:
+						panic("Undefined Command Type!")
+					}
 
-				kv.lastapplied = msg.CommandIndex
-				if kv.NeedSnapshot() {
-					data := kv.MakeSnapshot()
-					go kv.rf.Snapshot(msg.CommandIndex, data)
+					if kv.NeedSnapshot() {
+						kv.MakeSnapshot(msg.CommandIndex)
+					}
 				}
+				kv.mu.Unlock()
+			} else if msg.SnapshotValid {
+				kv.mu.Lock()
+				kv.ApplySnapshot(msg.SnapshotIndex, msg.SnapshotTerm, msg.Snapshot)
+				kv.mu.Unlock()
 			}
-			kv.mu.Unlock()
-		} else if msg.SnapshotValid {
-			kv.ApplySnapshot(msg.Snapshot)
 		}
 	}
 }
@@ -231,13 +234,15 @@ func (kv *ShardKV) ApplyCommand(msg raft.ApplyMsg) {
 			log.Fatalf("command.op error!")
 		}
 
+		DPrintf("[%d %d] %s (%s, %s) success and the value become %s", kv.gid, kv.me, command.Op, command.Key, command.Value, kv.Shards[shardId].KVs[command.Key])
+
 		kv.lastRequestInfo[command.ClerkId] = &RequestInfo{
 			RequestID: command.RequestId,
 			Err:       reply.Err,
 		}
 	}
 
-	DPrintf("[%d %d] Apply Command %s (%s, %s) and reply %+v", kv.gid, kv.me, command.Op, command.Key, command.Value, reply)
+	DPrintf("[%d %d] Apply Command #%d %s (%s, %s) and reply %+v", kv.gid, kv.me, msg.CommandIndex, command.Op, command.Key, command.Value, reply)
 	if kv.rf.GetRaftState() == raft.Leader && kv.rf.GetCurrentTerm() == msg.CommandTerm {
 		go func(reply_ *Reply) {
 			ch <- reply_
@@ -276,7 +281,6 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 		make_end:        make_end,
 		gid:             gid,
 		ctrlers:         ctrlers,
-		persister:       persister,
 		maxraftstate:    maxraftstate,
 		lastapplied:     0,
 		lastRequestInfo: make(map[int64]*RequestInfo),
@@ -286,11 +290,12 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 	}
 	kv.applyCh = make(chan raft.ApplyMsg)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
+	kv.rf.GroupId = kv.gid
 
 	for i := range kv.Shards {
 		kv.Shards[i].KVs = make(map[string]string)
 	}
-	kv.ApplySnapshot(kv.persister.ReadSnapshot())
+	kv.ApplySnapshot(-1, -1, persister.ReadSnapshot())
 
 	go kv.Applier()
 	go kv.ConfigPuller()

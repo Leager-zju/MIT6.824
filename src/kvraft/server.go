@@ -51,7 +51,7 @@ func (kv *KVServer) ApplySnapshot(data []byte) {
 }
 
 func (kv *KVServer) NeedSnapshot() bool {
-	return kv.maxraftstate != -1 && kv.persister.RaftStateSize() >= kv.maxraftstate
+	return kv.maxraftstate != -1 && kv.rf.GetRaftStateSize() >= kv.maxraftstate
 }
 
 type RequestInfo struct {
@@ -60,11 +60,10 @@ type RequestInfo struct {
 }
 
 type KVServer struct {
-	mu        sync.RWMutex
-	me        int
-	rf        *raft.Raft
-	applyCh   chan raft.ApplyMsg
-	persister *raft.Persister
+	mu      sync.RWMutex
+	me      int
+	rf      *raft.Raft
+	applyCh chan raft.ApplyMsg
 
 	dead int32
 
@@ -122,7 +121,7 @@ func (kv *KVServer) Applier() {
 				if kv.NeedSnapshot() {
 					DPrintf("[%d] snapshot", kv.me)
 					data := kv.MakeSnapshot()
-					go kv.rf.Snapshot(msg.CommandIndex, data)
+					kv.rf.Snapshot(msg.CommandIndex, data)
 				}
 			}
 			kv.mu.Unlock()
@@ -191,15 +190,15 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	labgob.Register(Args{})
 
 	kv := &KVServer{
-		me:              me,
-		applyCh:         make(chan raft.ApplyMsg),
-		persister:       persister,
+		me:      me,
+		applyCh: make(chan raft.ApplyMsg),
+
 		maxraftstate:    maxraftstate,
 		KVs:             make(map[string]string),
 		lastRequestInfo: make(map[uint32]*RequestInfo),
 	}
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
-	kv.ApplySnapshot(kv.persister.ReadSnapshot())
+	kv.ApplySnapshot(persister.ReadSnapshot())
 
 	go kv.Applier()
 

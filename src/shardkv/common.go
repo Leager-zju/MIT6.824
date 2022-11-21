@@ -59,6 +59,7 @@ type ShardCommand struct {
 	Op              string
 	Shard           *Shard
 	Sid             int
+	ConfigNum       int
 	LastRequestInfo map[int64]RequestInfo
 }
 

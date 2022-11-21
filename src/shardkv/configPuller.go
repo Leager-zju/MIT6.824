@@ -21,9 +21,9 @@ func (kv *ShardKV) ApplyUpdateConfigCommand(msg raft.ApplyMsg) {
 
 		if newconfig.Num > 1 {
 			// config 发生变化：
-			// 1. 分配且仍持有的保持 Valid
-			// 2. 分配但未持有的变为 NeedPull 状态，等到拉取 shard 完成后变为 Valid
-			// 3. 持有但未分配的变为 NeedBePull 状态，等待其他组 pull 后被回收
+			// 1. 分配且仍持有的保持 Ready
+			// 2. 分配但未持有的变为 NeedPull，等到拉取 shard 完成后变为 Valid
+			// 3. 持有但未分配的变为 Waiting，等待其他组 pull 后被回收
 			for sid, gid := range kv.lastConfig.Shards {
 				if gid != kv.gid && kv.OwnShard(sid) {
 					kv.Shards[sid].ShardStatus = NeedPull
@@ -45,18 +45,19 @@ func (kv *ShardKV) ConfigPuller() {
 		if kv.rf.GetRaftState() == raft.Leader {
 			kv.mu.RLock()
 			CanPullConfig := true
+			lastConfig, configNum := kv.currentConfig, kv.currentConfig.Num
 			for sid := range kv.currentConfig.Shards {
 				if !kv.ReadyForConfigPuller(sid) {
 					CanPullConfig = false
 					break
 				}
 			}
+			kv.mu.RUnlock()
 
 			if CanPullConfig {
 				newconfig := kv.GetNewConfig()
-				if newconfig.Num > kv.currentConfig.Num {
-					lastConfig := kv.currentConfig
-					if lastConfig.Num == 0 && newconfig.Num > 1 { // 第一次加入集群，需初始化 lastconfig
+				if newconfig.Num > configNum {
+					if configNum == 0 && newconfig.Num > 1 { // 第一次加入集群，需初始化 lastconfig
 						lastConfig = kv.mck.Query(newconfig.Num - 1)
 					}
 					kv.rf.Start(ConfigCommand{
@@ -65,7 +66,6 @@ func (kv *ShardKV) ConfigPuller() {
 					})
 				}
 			}
-			kv.mu.RUnlock()
 		}
 		time.Sleep(NewConfigQueryTimeOut)
 	}
