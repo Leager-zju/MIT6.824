@@ -15,7 +15,7 @@ func (kv *ShardKV) ApplyUpdateConfigCommand(msg raft.ApplyMsg) {
 	// locked
 	Command := msg.Command.(ConfigCommand)
 	lastconfig, newconfig := Command.LastConfig, Command.NewConfig
-	if newconfig.Num > kv.currentConfig.Num {
+	if newconfig.Num == kv.currentConfig.Num+1 {
 		kv.lastConfig = lastconfig
 		kv.currentConfig = newconfig
 
@@ -29,12 +29,12 @@ func (kv *ShardKV) ApplyUpdateConfigCommand(msg raft.ApplyMsg) {
 					kv.Shards[sid].ShardStatus = NeedPull
 				}
 				if gid == kv.gid && !kv.OwnShard(sid) {
-					kv.Shards[sid].ShardStatus = NeedBePull
+					kv.Shards[sid].ShardStatus = Waiting
 				}
 			}
 		}
 
-		DPrintf("[%d %d] apply config: last %+v, new %+v", kv.gid, kv.me, lastconfig, newconfig)
+		DPrintf("[%d %d] Apply Config: last %+v, new %+v", kv.gid, kv.me, lastconfig, newconfig)
 	}
 }
 
@@ -51,7 +51,6 @@ func (kv *ShardKV) ConfigPuller() {
 					break
 				}
 			}
-			kv.mu.RUnlock()
 
 			if CanPullConfig {
 				newconfig := kv.GetNewConfig()
@@ -66,6 +65,7 @@ func (kv *ShardKV) ConfigPuller() {
 					})
 				}
 			}
+			kv.mu.RUnlock()
 		}
 		time.Sleep(NewConfigQueryTimeOut)
 	}

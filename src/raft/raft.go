@@ -717,7 +717,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
 func (rf *Raft) Kill() {
 	atomic.StoreInt32(&rf.dead, 1)
-	DPrintf("[%d %d %v] dead", rf.me, rf.CurrentTerm, rf.raftState)
 }
 
 func (rf *Raft) killed() bool {

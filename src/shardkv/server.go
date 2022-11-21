@@ -22,9 +22,11 @@ const ExecutionTimeOut = 500 * time.Millisecond
 
 const NewConfigQueryTimeOut = 100 * time.Millisecond
 
-const NewShardPullerTimeOut = 100 * time.Millisecond
+const ShardPullerTimeOut = 100 * time.Millisecond
 
-const NewGarbageCollectorTimeOut = 100 * time.Millisecond
+const GarbageCollectorTimeOut = 100 * time.Millisecond
+
+const EmptyEntryDetectorTimeOut = 100 * time.Millisecond
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
@@ -48,14 +50,12 @@ type ShardKV struct {
 	lastapplied  int
 
 	Shards          [shardctrler.NShards]Shard
-	lastRequestInfo map[int64]RequestInfo
+	lastRequestInfo map[int64]*RequestInfo
 
 	lastConfig    shardctrler.Config
 	currentConfig shardctrler.Config // currentConfig.Num 其实就相当于 raft 层的 Term
 
 	dead int32
-
-	RequestId int
 }
 
 func (kv *ShardKV) MakeSnapshot() []byte {
@@ -109,6 +109,11 @@ func (kv *ShardKV) OwnShard(shardId int) bool {
 	return kv.currentConfig.Shards[shardId] == kv.gid
 }
 
+func (kv *ShardKV) NeedPull(shardId int) bool {
+	// locked
+	return kv.OwnShard(shardId) && kv.Shards[shardId].ShardStatus == NeedPull
+}
+
 // 分片数据是否能被客户端访问
 func (kv *ShardKV) ReadyForServer(shardId int) bool {
 	// locked
@@ -129,7 +134,6 @@ func (kv *ShardKV) ReadyButNeedSendGC(shardId int) bool {
 func (kv *ShardKV) HandleRequest(args *OperationCommand, reply *Reply) {
 	kv.mu.Lock()
 	if args.Op != "Get" && kv.isDuplicated(args.RequestId, args.ClerkId) {
-		DPrintf("args %+v duplicated", args)
 		reply.Err = kv.lastRequestInfo[args.ClerkId].Err
 		kv.mu.Unlock()
 		return
@@ -150,10 +154,10 @@ func (kv *ShardKV) HandleRequest(args *OperationCommand, reply *Reply) {
 	select {
 	case <-time.After(ExecutionTimeOut):
 		reply.Err = ErrWrongLeader
-		DPrintf("[%d %d] %+v timeout", kv.gid, kv.me, args)
+		DPrintf("[%d %d] %s (%s, %s) timeout", kv.gid, kv.me, args.Op, args.Key, args.Value)
 	case result := <-ch:
 		reply.Value, reply.Err = result.Value, result.Err
-		DPrintf("[%d %d] %+v success, get reply {%+v}", kv.gid, kv.me, args, reply)
+		DPrintf("[%d %d] %s (%s, %s) success, get reply {%+v}", kv.gid, kv.me, args.Op, args.Key, args.Value, reply)
 	}
 }
 
@@ -162,7 +166,7 @@ func (kv *ShardKV) Applier() {
 		if msg.CommandValid {
 			kv.mu.Lock()
 			if msg.CommandIndex > kv.lastapplied {
-				DPrintf("[%d %d] Get Command ---- %+v", kv.gid, kv.me, msg)
+				DPrintf("[%d %d] Get Command %+v", kv.gid, kv.me, msg.Command)
 
 				switch msg.Command.(type) {
 				case OperationCommand:
@@ -171,13 +175,14 @@ func (kv *ShardKV) Applier() {
 					kv.ApplyUpdateConfigCommand(msg)
 				case ShardCommand:
 					kv.ApplyShardCommand(msg)
+				case EmptyCommand:
+					kv.ApplyEmptyCommand(msg)
 				default:
 					panic("Undefined Command Type!")
 				}
 
 				kv.lastapplied = msg.CommandIndex
 				if kv.NeedSnapshot() {
-					DPrintf("[%d %d] Snapshot", kv.gid, kv.me)
 					data := kv.MakeSnapshot()
 					go kv.rf.Snapshot(msg.CommandIndex, data)
 				}
@@ -226,13 +231,13 @@ func (kv *ShardKV) ApplyCommand(msg raft.ApplyMsg) {
 			log.Fatalf("command.op error!")
 		}
 
-		kv.lastRequestInfo[command.ClerkId] = RequestInfo{
+		kv.lastRequestInfo[command.ClerkId] = &RequestInfo{
 			RequestID: command.RequestId,
 			Err:       reply.Err,
 		}
 	}
 
-	DPrintf("[%d %d] applyCommand %+v and reply %+v", kv.gid, kv.me, command, reply)
+	DPrintf("[%d %d] Apply Command %s (%s, %s) and reply %+v", kv.gid, kv.me, command.Op, command.Key, command.Value, reply)
 	if kv.rf.GetRaftState() == raft.Leader && kv.rf.GetCurrentTerm() == msg.CommandTerm {
 		go func(reply_ *Reply) {
 			ch <- reply_
@@ -263,6 +268,7 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 	labgob.Register(OperationCommand{})
 	labgob.Register(ConfigCommand{})
 	labgob.Register(ShardCommand{})
+	labgob.Register(EmptyCommand{})
 
 	kv := &ShardKV{
 		me:              me,
@@ -273,11 +279,10 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 		persister:       persister,
 		maxraftstate:    maxraftstate,
 		lastapplied:     0,
-		lastRequestInfo: make(map[int64]RequestInfo),
+		lastRequestInfo: make(map[int64]*RequestInfo),
 		lastConfig:      shardctrler.Config{Num: 0},
 		currentConfig:   shardctrler.Config{Num: 0},
 		dead:            0,
-		RequestId:       0,
 	}
 	kv.applyCh = make(chan raft.ApplyMsg)
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
@@ -291,6 +296,7 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister,
 	go kv.ConfigPuller()
 	go kv.ShardPuller()
 	go kv.GarbageCollector()
+	go kv.EmptyEntryDetector()
 
 	return kv
 }

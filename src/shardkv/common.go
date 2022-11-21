@@ -15,20 +15,19 @@ const (
 	ErrNoKey       = "ErrNoKey"
 	ErrWrongGroup  = "ErrWrongGroup"
 	ErrWrongLeader = "ErrWrongLeader"
-	ErrDuplicated  = "ErrDuplicated"
 	ErrNotReady    = "ErrNotReady"
-	ErrOldRequest  = "ErrOldRequest"
 )
 
 type status int
 
 const (
-	Ready              status = iota // 一切就绪
-	ReadyButNeedSendGC               // 就绪，但需要通知其他 group 进行 GC
-
-	NeedPull   // 表明该分片等待从其他 group 处拉取
-	NeedBePull // 表明该分片等待被其他 group 拉取
-	NeedBeGC   // 表明该分片刚被其他 group 拉取，等待 gc 通知
+	// everyone
+	Ready status = iota // 一切就绪
+	// new owner
+	NeedPull           // 表明该分片等待从其他 group 处拉取
+	ReadyButNeedSendGC // 就绪，但需要通知其他 group 进行 GC
+	// old owner
+	Waiting // 表明该分片等待被其他 group 拉取 + 通知 GC
 )
 
 type Shard struct {
@@ -66,6 +65,9 @@ type ShardCommand struct {
 type ConfigCommand struct {
 	LastConfig shardctrler.Config
 	NewConfig  shardctrler.Config
+}
+
+type EmptyCommand struct {
 }
 
 // rpc

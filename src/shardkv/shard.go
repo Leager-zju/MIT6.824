@@ -14,34 +14,28 @@ func (kv *ShardKV) HandleBetweenGroupRequest(args *RPCArgs, reply *RPCReply) {
 		return
 	}
 
-	kv.mu.Lock()
-	defer kv.mu.Unlock()
-	sid, configNum := args.ShardId, args.ConfigNum
-
+	kv.mu.RLock()
+	defer kv.mu.RUnlock()
 	defer DPrintf("[%d %d] get %+v and reply %+v", kv.gid, kv.me, args, reply)
-	if configNum > kv.currentConfig.Num {
-		reply.Err = ErrNotReady
-		return
-	}
 
-	if configNum < kv.currentConfig.Num {
-		reply.Err = ErrOldRequest
+	sid, configNum := args.ShardId, args.ConfigNum
+	if configNum > kv.currentConfig.Num {
+		reply.ConfigNum, reply.Err = kv.currentConfig.Num, ErrNotReady
 		return
 	}
 
 	switch args.Op {
 	case "PullShard":
-		kv.Shards[sid].ShardStatus = NeedBeGC
-
-		shard := kv.Shards[sid]
 		reply.Shard.KVs = make(map[string]string)
-		reply.LastRequestInfo = make(map[int64]RequestInfo)
-		for k, v := range shard.KVs {
+		for k, v := range kv.Shards[sid].KVs {
 			reply.Shard.KVs[k] = v
 		}
-		for k, v := range kv.lastRequestInfo {
-			reply.LastRequestInfo[k] = v
+
+		reply.LastRequestInfo = make(map[int64]RequestInfo)
+		for clerkId, lastrequestInfo := range kv.lastRequestInfo {
+			reply.LastRequestInfo[clerkId] = *lastrequestInfo
 		}
+
 	case "GarbageCollect":
 		go kv.rf.Start(ShardCommand{
 			Op:              "GarbageCollect",
@@ -51,8 +45,7 @@ func (kv *ShardKV) HandleBetweenGroupRequest(args *RPCArgs, reply *RPCReply) {
 		})
 	}
 
-	reply.ConfigNum = configNum
-	reply.Err = OK
+	reply.ConfigNum, reply.Err = configNum, OK
 }
 
 func (kv *ShardKV) ApplyShardCommand(msg raft.ApplyMsg) {
@@ -60,8 +53,6 @@ func (kv *ShardKV) ApplyShardCommand(msg raft.ApplyMsg) {
 	switch Command.Op {
 	case "InsertShard":
 		kv.InsertShard(Command)
-	case "UpdateStatus":
-		kv.UpdateShardStatus(Command)
 	case "GarbageCollect":
 		kv.GarbageCollect(Command)
 	default:
@@ -69,33 +60,41 @@ func (kv *ShardKV) ApplyShardCommand(msg raft.ApplyMsg) {
 	}
 }
 
+func (kv *ShardKV) ApplyEmptyCommand(msg raft.ApplyMsg) {
+	DPrintf("EMPTY COMMAND")
+}
+
 func (kv *ShardKV) InsertShard(Command ShardCommand) {
 	// locked
 	newshard, sid := Command.Shard, Command.Sid
-	for k, v := range newshard.KVs {
-		kv.Shards[sid].KVs[k] = v
-	}
-	for clientId, lastrequest := range Command.LastRequestInfo {
-		Rinfo, ok := kv.lastRequestInfo[clientId]
-		if !ok || Rinfo.RequestID < lastrequest.RequestID {
-			kv.lastRequestInfo[clientId] = lastrequest
+	if kv.Shards[sid].ShardStatus == NeedPull {
+		for k, v := range newshard.KVs {
+			kv.Shards[sid].KVs[k] = v
 		}
+		for clientId, lastrequestInfo := range Command.LastRequestInfo {
+			Rinfo, ok := kv.lastRequestInfo[clientId]
+			if !ok || Rinfo.RequestID < lastrequestInfo.RequestID {
+				kv.lastRequestInfo[clientId] = &RequestInfo{
+					lastrequestInfo.RequestID,
+					lastrequestInfo.Err,
+				}
+			}
+		}
+		kv.Shards[sid].ShardStatus = ReadyButNeedSendGC
+		DPrintf("[%d %d] insert %d-th Shard %+v", kv.gid, kv.me, Command.Sid, Command.Shard)
 	}
-	kv.Shards[sid].ShardStatus = ReadyButNeedSendGC
-	DPrintf("[%d %d] insert %d-th Shard %+v so the Shards become %+v", kv.gid, kv.me, Command.Sid, Command.Shard, kv.Shards)
-}
-
-func (kv *ShardKV) UpdateShardStatus(Command ShardCommand) {
-	// locked
-	sid := Command.Sid
-	kv.Shards[sid].ShardStatus = Ready
 }
 
 func (kv *ShardKV) GarbageCollect(Command ShardCommand) {
 	// locked
 	sid := Command.Sid
-	kv.Shards[sid].KVs = make(map[string]string)
-	kv.Shards[sid].ShardStatus = Ready
+	if kv.Shards[sid].ShardStatus == ReadyButNeedSendGC {
+		kv.Shards[sid].ShardStatus = Ready
+	} else if kv.Shards[sid].ShardStatus == Waiting {
+		kv.Shards[sid].KVs = make(map[string]string)
+		kv.Shards[sid].ShardStatus = Ready
+	}
+
 }
 
 func (kv *ShardKV) ShardPuller() {
@@ -106,47 +105,41 @@ func (kv *ShardKV) ShardPuller() {
 			configNum := kv.currentConfig.Num // 捎带当前 config.num，防止收到过期回复
 			var wg sync.WaitGroup
 			for sid, gid := range kv.lastConfig.Shards {
-				if kv.OwnShard(sid) && kv.Shards[sid].ShardStatus == NeedPull {
-					// 向前任持有者拉取
+				if kv.NeedPull(sid) { // 向前任持有者拉取 shard
 					wg.Add(1)
-					others := kv.lastConfig.Groups[gid]
-					args := &RPCArgs{
-						Op:        "PullShard",
-						ShardId:   sid,
-						ConfigNum: configNum,
-					}
-					DPrintf("[%d %d] pull shard %d from %d with args %+v", kv.gid, kv.me, sid, gid, args)
-
 					// Send RPC and Pull Shard
 					go func(sid, gid int, others []string) {
+						defer wg.Done()
 						index := 0
+						args := &RPCArgs{
+							Op:        "PullShard",
+							ShardId:   sid,
+							ConfigNum: configNum,
+						}
+						DPrintf("[%d %d] pull shard %d from %d with args %+v", kv.gid, kv.me, sid, gid, args)
 						for {
 							end := kv.make_end(others[index])
 							reply := &RPCReply{}
 							ok := end.Call("ShardKV.HandleBetweenGroupRequest", args, reply)
-							if ok && (reply.Err == OK || reply.Err == ErrNotReady) {
-								DPrintf("[%d %d] pull shard %d from %d and get reply %+v", kv.gid, kv.me, sid, gid, reply)
-								// update step-by-step
-								if reply.ConfigNum == kv.currentConfig.Num && kv.Shards[sid].ShardStatus == NeedPull {
-									kv.rf.Start(ShardCommand{
-										Op:              "InsertShard",
-										Shard:           &reply.Shard,
-										Sid:             sid,
-										LastRequestInfo: reply.LastRequestInfo,
-									})
-								}
-								wg.Done()
+							if ok && reply.Err == OK {
+								DPrintf("[%d %d] pull shard %d from %d and get KVs: %+v", kv.gid, kv.me, sid, gid, reply.Shard.KVs)
+								kv.rf.Start(ShardCommand{
+									Op:              "InsertShard",
+									Shard:           &reply.Shard,
+									Sid:             sid,
+									LastRequestInfo: reply.LastRequestInfo,
+								})
 								return
-							} // else: FailSend / ErrWrongLeader / ErrScale
+							} // else: FailSend / ErrWrongLeader / ErrNotReady
 							index = (index + 1) % len(others)
 						} // end for
-					}(sid, gid, others)
+					}(sid, gid, kv.lastConfig.Groups[gid])
 				}
 			}
 			kv.mu.RUnlock()
 			wg.Wait()
 		}
-		time.Sleep(NewShardPullerTimeOut)
+		time.Sleep(ShardPullerTimeOut)
 	}
 }
 
@@ -158,45 +151,51 @@ func (kv *ShardKV) GarbageCollector() {
 			configNum := kv.currentConfig.Num // 捎带当前 config.num，防止收到过期回复
 			var wg sync.WaitGroup
 			for sid, gid := range kv.lastConfig.Shards {
-				if kv.ReadyButNeedSendGC(sid) {
-					// 向前任持有者发送 GC 请求
+				if kv.ReadyButNeedSendGC(sid) { // 向前任持有者发送 GC 请求
 					wg.Add(1)
-					others := kv.lastConfig.Groups[gid]
-					args := &RPCArgs{
-						Op:        "GarbageCollect",
-						ShardId:   sid,
-						ConfigNum: configNum,
-					}
-					DPrintf("[%d %d] send GC %d to %d with args %+v", kv.gid, kv.me, sid, gid, args)
-
 					// Send RPC and make GC
 					go func(sid, gid int, others []string) {
+						defer wg.Done()
 						index := 0
+						args := &RPCArgs{
+							Op:        "GarbageCollect",
+							ShardId:   sid,
+							ConfigNum: configNum,
+						}
+						DPrintf("[%d %d] send GC %d to %d at Config %d", kv.gid, kv.me, sid, gid, configNum)
 						for {
 							end := kv.make_end(others[index])
 							reply := &RPCReply{}
 							ok := end.Call("ShardKV.HandleBetweenGroupRequest", args, reply)
-							if ok && (reply.Err == OK || reply.Err == ErrNotReady) {
-								DPrintf("[%d %d] send GC %d to %d and get reply %+v", kv.gid, kv.me, sid, gid, reply)
-								if reply.ConfigNum == kv.currentConfig.Num && kv.Shards[sid].ShardStatus == ReadyButNeedSendGC {
-									kv.rf.Start(ShardCommand{
-										Op:              "UpdateStatus",
-										Shard:           nil,
-										Sid:             sid,
-										LastRequestInfo: nil,
-									})
-								}
-								wg.Done()
+							if ok && reply.Err == OK {
+								DPrintf("[%d %d] send GC %d to %d success", kv.gid, kv.me, sid, gid)
+								kv.rf.Start(ShardCommand{
+									Op:              "GarbageCollect",
+									Shard:           nil,
+									Sid:             sid,
+									LastRequestInfo: nil,
+								})
 								return
-							} // else: FailSend / ErrWrongLeader / ErrScale
+							} // else: FailSend / ErrWrongLeader / ErrNotReady
 							index = (index + 1) % len(others)
 						} // end for
-					}(sid, gid, others)
+					}(sid, gid, kv.lastConfig.Groups[gid])
 				}
 			}
 			kv.mu.RUnlock()
 			wg.Wait()
 		}
-		time.Sleep(NewGarbageCollectorTimeOut)
+		time.Sleep(GarbageCollectorTimeOut)
+	}
+}
+
+func (kv *ShardKV) EmptyEntryDetector() {
+	for !kv.killed() {
+		if kv.rf.GetRaftState() == raft.Leader {
+			if kv.rf.GetLastLog().Term < kv.rf.GetCurrentTerm() {
+				kv.rf.Start(EmptyCommand{})
+			}
+		}
+		time.Sleep(EmptyEntryDetectorTimeOut)
 	}
 }

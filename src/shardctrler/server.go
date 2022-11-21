@@ -2,7 +2,6 @@ package shardctrler
 
 import (
 	"log"
-	"sort"
 	"sync"
 	"time"
 
@@ -67,39 +66,59 @@ func (sc *ShardCtrler) makeNewConfig() *Config {
 }
 
 func (sc *ShardCtrler) shuffleShard(config *Config) {
-	// DPrintf("new config before shuffle: %v", config)
-	// defer DPrintf("shuffle result: %v", config)
-
 	N := len(config.Groups)
-
 	if N == 0 {
 		for i := 0; i < NShards; i++ {
 			config.Shards[i] = 0
 		}
 		return
 	}
-	gids := make([]int, 0)
-	shardPerGroup := NShards / N
-	index := 0
 
+	allocated := 0
+	NumofShards := make(map[int]int)
 	for gid := range config.Groups {
-		gids = append(gids, gid)
+		NumofShards[gid] = 0
 	}
-	sort.Ints(gids)
-
-	for _, gid := range gids {
-		for i := 0; i < shardPerGroup; i++ {
-			config.Shards[index] = gid
-			index++
+	for _, gid := range config.Shards {
+		if _, ok := config.Groups[gid]; ok {
+			allocated++
+			NumofShards[gid]++
 		}
 	}
-	for _, gid := range gids {
-		if index >= NShards {
+
+	for {
+		WhoHasTheMostShards, WhoHasTheLeastShards := -1, -1
+		MaxmShards, MinmShards := -1, NShards+1
+
+		for gid, num := range NumofShards {
+			if num > MaxmShards {
+				MaxmShards = num
+				WhoHasTheMostShards = gid
+			}
+			if num < MinmShards {
+				MinmShards = num
+				WhoHasTheLeastShards = gid
+			}
+		}
+		if allocated == NShards && MaxmShards < MinmShards+2 {
 			break
 		}
-		config.Shards[index] = gid
-		index++
+
+		for sid, gid := range config.Shards {
+			if _, ok := config.Groups[gid]; !ok { // gid 已离开，直接分给拥有分片最少的 group
+				config.Shards[sid] = WhoHasTheLeastShards
+				allocated++
+				NumofShards[WhoHasTheLeastShards]++
+				break
+			} else if gid == WhoHasTheMostShards && allocated == NShards {
+				config.Shards[sid] = WhoHasTheLeastShards
+				NumofShards[WhoHasTheMostShards]--
+				NumofShards[WhoHasTheLeastShards]++
+				break
+			}
+		}
 	}
+
 }
 
 func (sc *ShardCtrler) HandleRequest(args *Args, reply *Reply) {
