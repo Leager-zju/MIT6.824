@@ -68,7 +68,7 @@ func (rf *Raft) UpdateMatchNextIndex(peer, match, next int) {
 		rf.matchIndex[peer] = match
 	}
 	if next != null {
-		// DPrintf("[%d %d %d %v] nextIndex[%d] %d -> %d", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, peer, rf.nextIndex[peer], next)
+		DPrintf("[%d %d %d %v] nextIndex[%d] %d -> %d", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, peer, rf.nextIndex[peer], next)
 		rf.nextIndex[peer] = next
 	}
 }
@@ -116,7 +116,7 @@ func (rf *Raft) FindN() {
 			matchIndexSet = append(matchIndexSet, matchindex)
 		}
 	}
-	// DPrintf("[%d %d %d %v] matchIndexSet: %v", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, matchIndexSet)
+	DPrintf("[%d %d %d %v] matchIndexSet: %v", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, matchIndexSet)
 	sort.Ints(matchIndexSet)
 	N := matchIndexSet[len(rf.peers)/2]
 
@@ -131,7 +131,7 @@ func (rf *Raft) FindN() {
 
 func (rf *Raft) UpdateCommitAndApply(commitIndex int) {
 	// locked
-	// DPrintf("[%d %d %d %v] update commitIndex %d -> %d", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, rf.commitIndex, commitIndex)
+	DPrintf("[%d %d %d %v] update commitIndex %d -> %d", rf.GroupId, rf.me, rf.CurrentTerm, rf.raftState, rf.commitIndex, commitIndex)
 	rf.commitIndex = commitIndex
 	go func() { rf.applyCond.Signal() }()
 }

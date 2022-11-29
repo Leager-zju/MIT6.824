@@ -24,14 +24,12 @@ func nrand() int64 {
 }
 
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
-	ck := &Clerk{
+	return &Clerk{
 		servers:        servers,
 		volatileLeader: 0,
 		RequestId:      0,
 		ClerkId:        uint32(nrand()),
 	}
-
-	return ck
 }
 
 func (ck *Clerk) SendRequest(args *Args) string {

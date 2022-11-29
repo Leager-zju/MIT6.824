@@ -14,9 +14,7 @@ import (
 	"6.824/raft"
 )
 
-// const Debug = false
-
-const Debug = true
+const Debug = false
 
 const ExecutionTimeOut = 500 * time.Millisecond
 

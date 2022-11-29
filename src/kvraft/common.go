@@ -12,7 +12,7 @@ type Err string
 type Args struct {
 	Key       string
 	Value     string
-	Op        string // "Get" "Put" or "Append"
+	Op        string // "Get", "Put" or "Append"
 	RequestId uint32
 	ClerkId   uint32
 

@@ -6,8 +6,6 @@ import "6.824/shardctrler"
 // Lots of replica groups, each running Raft.
 // Shardctrler decides which group serves each shard.
 // Shardctrler may change shard assignment from time to time.
-//
-// You will have to modify these definitions.
 type Err string
 
 const (

@@ -11,9 +11,6 @@ import (
 	"6.824/labrpc"
 )
 
-// Debugging
-// const Debug = true
-
 const Debug = false
 
 type RaftState string

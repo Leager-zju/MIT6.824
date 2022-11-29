@@ -38,7 +38,7 @@ func (kv *ShardKV) ApplyUpdateConfigCommand(msg raft.ApplyMsg) {
 	}
 }
 
-// 定期拉取配置
+// 周期性拉取配置
 func (kv *ShardKV) ConfigPuller() {
 	// goroutine
 	for !kv.killed() {

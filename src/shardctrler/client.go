@@ -43,7 +43,6 @@ func (ck *Clerk) SendRequest(args *Args) Config {
 			ck.RequestId++
 			return reply.Config
 		}
-		// time.Sleep(100 * time.Millisecond)
 		ck.volatileLeader = (ck.volatileLeader + 1) % len(ck.servers)
 	}
 }

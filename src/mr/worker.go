@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const WorkerWaitTime = 5 * time.Second
+
 // Map functions return a slice of KeyValue.
 type KeyValue struct {
 	Key   string
@@ -47,14 +49,19 @@ func Worker(mapf func(string, string) []KeyValue,
 
 	// One way to get started is to modify mr/worker.go's Worker()
 	// to send an RPC to the coordinator asking for a task.
-	reply := AskForTask()
 	for {
+		reply := AskForTask()
+		if reply.Over {
+			return
+		}
+
 		if reply.Wait {
-			time.Sleep(time.Second * 5)
+			time.Sleep(WorkerWaitTime)
 		} else if reply.Task == MAP {
 			// map phase
 			mapTaskNumber := reply.MapTaskNumber
-			// fmt.Println(mapTaskNumber, ": map begin")
+
+			// read file
 			file, err := os.Open(reply.Filename)
 			if err != nil {
 				log.Fatalf("cannot open %v", reply.Filename)
@@ -68,9 +75,7 @@ func Worker(mapf func(string, string) []KeyValue,
 
 			// write kv into file buckets
 			// key -> filename: "ihash(key)"
-
 			temp := make([][]KeyValue, reply.R)
-
 			for i := range temp {
 				temp[i] = make([]KeyValue, 0)
 			}
@@ -79,39 +84,34 @@ func Worker(mapf func(string, string) []KeyValue,
 				hash := ihash(kv.Key) % reply.R
 				temp[hash] = append(temp[hash], kv)
 			}
+
 			for i := 0; i < len(temp); i++ {
-				ofile, _ := ioutil.TempFile("/home/leager/go/6.824/6.824/6.824/mr/mapfile", fmt.Sprintf("%d", i))
+				ofile, _ := ioutil.TempFile("./mr/mapfile", fmt.Sprintf("%d", i))
 				enc := json.NewEncoder(ofile)
 				for _, kv := range temp[i] {
 					enc.Encode(&kv)
 				}
 
 				old_path := ofile.Name()
-				new_path := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-%d-%d", mapTaskNumber, i)
+				new_path := fmt.Sprintf("../main/mr-tmp/mr-%d-%d", mapTaskNumber, i)
 
 				os.Rename(old_path, new_path)
 				ofile.Close()
 			}
-			// tell the master that the map job is done
 
+			// tell the master that the map job is done
 			CallFinish(MAP, reply.TimeStamp, mapTaskNumber, 0)
-			// fmt.Println(mapTaskNumber, ": map finish")
 		} else {
 			// reduce phase
 			reduceTaskNumber := reply.ReduceTaskNumber
-			// fmt.Println(reduceTaskNumber, ": reduce begin")
 
-			// ofilename := fmt.Sprintf("mr-out-%d", reduceTaskNumber)
-			// ofile, _ := os.Create(ofilename)
-			ofile, _ := ioutil.TempFile("/home/leager/go/6.824/6.824/6.824/mr/reducefile", fmt.Sprintf("%d", reduceTaskNumber))
-
+			// read file
+			ofile, _ := ioutil.TempFile("./mr/reducefile", fmt.Sprintf("%d", reduceTaskNumber))
 			var kva []KeyValue
-
 			for i := 0; i < reply.M; i++ {
-				iFilename := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-%d-%d", i, reduceTaskNumber)
+				iFilename := fmt.Sprintf("../main/mr-tmp/mr-%d-%d", i, reduceTaskNumber)
 				iFile, err := os.Open(iFilename)
 				if err == nil {
-					// fmt.Printf("mr-%d-%d: read success\n", i, reduceTaskNumber)
 					dec := json.NewDecoder(iFile)
 					for {
 						var kv KeyValue
@@ -144,55 +144,46 @@ func Worker(mapf func(string, string) []KeyValue,
 			}
 
 			old_path := ofile.Name()
-			new_path := fmt.Sprintf("/home/leager/go/6.824/6.824/6.824/main/mr-tmp/mr-out-%d", reduceTaskNumber)
+			new_path := fmt.Sprintf("../main/mr-tmp/mr-out-%d", reduceTaskNumber)
 
 			// no reduce task finished yet before
 			if _, err := os.Open(new_path); err != nil {
 				os.Rename(old_path, new_path)
 			}
-
 			ofile.Close()
+
 			// tell the master that the reduce job is done
 			CallFinish(REDUCE, reply.TimeStamp, 0, reduceTaskNumber)
-			// fmt.Println(reduceTaskNumber, ": reduce finish")
-		}
-		reply = AskForTask()
-		if reply.Over {
-			// fmt.Println("over")
-			return
 		}
 	}
 }
 
 // RPC call to the master.
-
 func AskForTask() Reply {
-	// fmt.Println("ask for task")
-	message := Args{}
-	reply := Reply{}
-	call("Master.Arrange", &message, &reply)
+	message := new(Args)
+	reply := new(Reply)
+	call("Master.Arrange", message, reply)
 
-	return reply
+	return *reply
 }
 
 func CallFinish(finish TaskType, timestamp time.Time, m int, r int) {
-	message := Args{
+	message := &Args{
 		Finished:         finish,
 		TimeStamp:        timestamp,
 		MapTaskNumber:    m,
 		ReduceTaskNumber: r,
 	}
-	reply := Reply{}
+	reply := new(Reply)
 
 	// send the RPC request, wait for the reply.
-	call("Master.Finished", &message, &reply)
+	call("Master.Finished", message, reply)
 }
 
 // send an RPC request to the master, wait for the response.
 // usually returns true.
 // returns false if something goes wrong.
 func call(rpcname string, message interface{}, reply interface{}) bool {
-	// c, err := rpc.DialHTTP("tcp", "127.0.0.1"+":1234")
 	c, err := rpc.DialHTTP("unix", "mr-socket")
 	if err != nil {
 		log.Fatal("dialing:", err)

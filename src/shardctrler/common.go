@@ -20,7 +20,6 @@ package shardctrler
 // The number of shards.
 const NShards = 10
 
-// Please don't change this.
 type Config struct {
 	Num    int              // config number
 	Shards [NShards]int     // shardid -> gid

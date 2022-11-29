@@ -17,9 +17,6 @@ import (
 	"6.824/shardctrler"
 )
 
-// which shard is a key in?
-// please use this function,
-// and please do not change it.
 func key2shard(key string) int {
 	shard := 0
 	if len(key) > 0 {
@@ -46,13 +43,6 @@ type Clerk struct {
 	volatileLeader map[int]int // gid -> leader
 }
 
-// the tester calls MakeClerk.
-//
-// ctrlers[] is needed to call shardctrler.MakeClerk().
-//
-// make_end(servername) turns a server name from a
-// Config.Groups[gid][i] into a labrpc.ClientEnd on which you can
-// send RPCs.
 func MakeClerk(ctrlers []*labrpc.ClientEnd, make_end func(string) *labrpc.ClientEnd) *Clerk {
 	return &Clerk{
 		sm:             shardctrler.MakeClerk(ctrlers),

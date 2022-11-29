@@ -10,9 +10,7 @@ import (
 	"6.824/raft"
 )
 
-// const Debug = false
-
-const Debug = true
+const Debug = false
 
 const ExecutionTimeOut = 500 * time.Millisecond
 
@@ -35,7 +33,6 @@ type ShardCtrler struct {
 	rf      *raft.Raft
 
 	lastRequestInfo map[int64]*RequestInfo // clerkID -> requestID
-	// Your data here.
 
 	configs []Config // indexed by config num
 }

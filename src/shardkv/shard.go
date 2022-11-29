@@ -62,7 +62,7 @@ func (kv *ShardKV) ApplyShardCommand(msg raft.ApplyMsg) {
 }
 
 func (kv *ShardKV) ApplyEmptyCommand() {
-	// DPrintf("EMPTY COMMAND")
+	// DPrintf("Empty cmd")
 }
 
 func (kv *ShardKV) InsertShard(Command ShardCommand) {
